@@ -1,0 +1,187 @@
+---
+title: "Regression Dataset"
+author: "Ayden Kelleher, Douglass Roth, Daniel Havens"
+format: pdf
+editor: source
+---
+
+## Load Data
+
+```{r, error=F, warning=F, message=F}
+library(tidyverse)
+library(ggplot2)
+library(dplyr)
+```
+
+```{r}
+data <- read_csv("Most-Recent-Cohorts-Field-of-Study.csv") #on individuals
+institution_data <- read_csv("MERGED2019_20_PP.csv") #on institutions
+```
+
+## Data Summary
+
+Our data is from the college scorecard data, [here](https://collegescorecard.ed.gov/data/)
+
+We are looking at the most recent field of study dataset. This consists of 229188 observations with 174 columns, regarding students in the 2019/2020 school year.
+
+Our institutional dataset is also pretty big, with 6694 rows and 3306 columns. We will join these dataframes on the university id, after reducing them in size.
+
+A technical document is linked [here](https://collegescorecard.ed.gov/assets/FieldOfStudyDataDocumentation.pdf). It details a how a few parameters were obtained, and explains what a few represent in the student data set.
+
+We found a partial data dictionary regarding the cohort data, detailing about columns. Many of the other columns have a shared name with the institution columns, which have nearly 3000 columns. We attached the csv files. The one titled `FieldOfStudy_Cohort_Map.csv` and `FieldOfStudy_Data_Dictionary.csv` are our main references. We found a full data dictionary for the institutional dataframe, in the yaml source file titled `data`. We will reference that for any unknown parameters in the cohort map.
+
+## Outcome Variable
+
+The outcome variable we would like to focus on is career earnings. There are a few different variables that we could use to measure this
+
+We are leaning towards `EARN_MDN_5YR` because we value the longer time frame. In addition, the longer time frame leads to less missing values, because some people don't make or report income for the first few years after graduation.
+
+## Predictors
+
+We have tons and tons of predictors. - We would like to have one or two regarding student debt after graduation, which are found in the cohort field of study dataset.
+
+- Degree Level earned (Associates/ Bachelors)
+
+- Field of study
+
+- public or private school
+
+- Test scores (ACT/SAT average score)
+
+- Main campus
+
+- Online/In person/Hybrid
+
+- Cost of schooling
+
+There are many other predictors we could use, but we need to look through the dataset first.
+
+The way we will access variables from both dataset is by joining the field of cohorts and the institutional data. This adds facts about schools to each student. This will give us a richer dataset, where we can look at not just universities in our data set, but any university with arbitrary predictors to help our model be more useful as schools change.
+
+```{r, eval=F}
+View(data) #this is our individual data
+```
+
+```{r, eval=F}
+View(institution_data) #this is our institution data
+```
+
+```{r, eval=F}
+joined_df <- institution_data %>%
+  left_join(data, by = "OPEID6")
+
+df_clean <- joined_df[, colMeans(is.na(joined_df)) <= 0.50]
+```
+
+```{r, eval=F}
+View(df_clean)
+```
+
+```{r, eval=F}
+df_clean <- df_clean %>% 
+  select(where(~ n_distinct(.) > 1))
+```
+
+```{r, eval=F}
+threshold <- 0.01
+
+df <- df_clean %>%
+  select(where(~ {
+    if (!is.numeric(.x)) {
+      TRUE
+    } else {
+      v <- var(.x, na.rm = TRUE)
+      !is.na(v) && v >= threshold
+    }
+  }))
+```
+
+```{r, eval=F}
+write.csv2(df, file="cleaner_data.csv")
+```
+
+```{r}
+interesting_col_names <- c(
+  "EARN_MDN_4YR",
+  "OPEID6",
+  "CITY",
+  "SCH_DEG",
+  "MAIN.x",
+  "NUMBRANCH",
+  "PREDDEG",
+  "HIGHDEG",
+  "ST_FIPS",
+  "REGION",
+  "ADM_RATE_ALL",
+  "PCIP12",
+  "PCIP24",
+  "PCIP51",
+  "PCIP52",
+  "UGDS",
+  "UG25ABV",
+  "UGDS_WHITE",
+  "UGDS_BLACK",
+  "UGDS_HISP",
+  "PPTUG_EF",
+  "COSTT4_A",
+  "TUITIONFEE_IN",
+  "TUITIONFEE_OUT",
+  "TUITFTE",
+  "INEXPFTE",
+  "AVGFACSAL",
+  "PFTFAC",
+  "C150_4",
+  "PFTFTUG1_EF",
+  "D150_4",
+  "C150_4_WHITE",
+  "C150_4_BLACK",
+  "C150_4_HISP",
+  "DEATH_YR8_RT",
+  "COMP_ORIG_YR8_RT",
+  "COMP_4YR_TRANS_YR8_RT",
+  "PELL_COMP_4YR_TRANS_YR8_RT",
+  "PELL_WDRAW_ORIG_YR8_RT",
+  "NOPELL_WDRAW_ORIG_YR8_RT",
+  "NOT1STGEN_COMP_4YR_TRANS_YR2_RT",
+  "FIRSTGEN_COMP_ORIG_YR2_RT",
+  "TUITFTE",
+  "OVERALL_YR2_N",
+  "DEBT_MDN"
+  
+)
+
+```
+
+
+```{r}
+colnames(df)
+```
+```{r}
+colnames(df)[1000:2000]
+
+```
+
+
+```{r}
+very_trimmed_df <- df[interesting_col_names]
+```
+
+
+```{r}
+write.csv2(very_trimmed_df, "very_trimmed_df.csv")
+```
+
+```{r}
+final_df <- very_trimmed_df[!is.na(as.numeric(as.character(very_trimmed_df$EARN_MDN_4YR))), ]
+```
+
+```{r}
+na_df  <- na.omit(final_df)
+```
+
+```{r}
+write.csv(na_df, "final_data.csv")
+```
+
+
+
