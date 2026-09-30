@@ -123,11 +123,13 @@ final_df <- very_trimmed_df[!is.na(as.numeric(as.character(very_trimmed_df$EARN_
 na_df  <- na.omit(final_df)
 ```
 
-This gives us the following dataset.
+All of this was done on a different document. Loading in the result from that process gives us the following dataset.
 
 ```{r}
 df <- read.csv("final_data.csv")
 ```
+
+We still have some decisions to make regading what data to use. Much of the variables we have are 75% or more just `PS`, which likely means primarily suppressed, which means not included since the sample size was too small, or the data was private. Since many of the predictors consist of things like debt after college, it makes sense that it is disclosed to the public (people like us). 
 
 ## EDA Begins
 
@@ -153,11 +155,9 @@ ggplot(df, aes(x=UGDS, y = EARN_MDN_4YR)) +
 ```
 
 ```{r}
-ggplot(df, aes(x=DEBT_MDN, y = EARN_MDN_4YR)) +
-  geom_point()+
-  labs(
-    title = "Median Debt versus Earning after 4 years"
-  )
+plot(as.numeric(df$DEBT_MDN), y=df$EARN_MDN_4YR)
+
+
 ```
 
 ```{r}
@@ -169,11 +169,8 @@ ggplot(df, aes(x=TUITFTE, y = EARN_MDN_4YR)) +
 ```
 
 ```{r}
-ggplot(df, aes(x=OVERALL_YR2_N, y = EARN_MDN_4YR)) +
-  geom_point()+
-  labs(
-    title = "Overall 2 year completion rate versus Earning after 4 years"
-  )
+plot(as.numeric(df$OVERALL_YR2_N), df$EARN_MDN_4YR)
+
 ```
 
 
@@ -201,5 +198,26 @@ ggplot(df, aes(x=PFTFAC, y = EARN_MDN_4YR)) +
   labs(
     title = "Percent of Faculty Full Time versus Earning after 4 years"
   )
+```
+
+```{r}
+hist(as.numeric(df$DEATH_YR8_RT)) #need to convert 
+
+plot(as.numeric(df$DEATH_YR8_RT), df$EARN_MDN_4YR)
+```
+
+
+
+## TODO
+
+
+
+### Convert the following to numeric
+
+DEATH_YR8_RT, COMP_ORIG_YR8_RT, COMP_4YR_TRANS_YR8_RT, PELL_COMP_4YR_TRANS_YR8_RT,  PELL_WDRAW_ORIG_YR8_RT, NOPELL_WDRAW_ORIG_YR8_RT, NOT1STGEN_COMP_4YR_TRANS_YR2_RT, FIRSTGEN_COMP_ORIG_YR2_RT, OVERALL_YR2_N, DEBT_MDN, DEBT_ALL_STGP_ANY_MEAN, BBRR1_FED_UG_DFLT
+
+
+```{r}
+#str(df)
 ```
 
