@@ -125,6 +125,42 @@ df <- read.csv("final_data.csv")
 
 ## EDA Begins
 
+```{r}
+ggplot(df, aes(x = "EARN_MDN_4YR")) +
+  geom_histogram()
+```
+
+```{r}
+ggplot(df, aes(x=ADM_RATE_ALL, y = EARN_MDN_4YR)) +
+  geom_point()+
+  labs(
+    title = "Admission Rate versus Earning after 4 years"
+  )
+```
+
+```{r}
+ggplot(df, aes(x=UGDS, y = EARN_MDN_4YR)) +
+  geom_point()+
+  labs(
+    title = "Enrollment of undergraduate certificate/degree-seeking students versus Earning after 4 years"
+  )
+```
+
+```{r}
+ggplot(df, aes(x=DEBT_MDN, y = EARN_MDN_4YR)) +
+  geom_point()+
+  labs(
+    title = "Median Debt versus Earning after 4 years"
+  )
+```
+
+```{r}
+ggplot(df, aes(x=TUITFTE, y = EARN_MDN_4YR)) +
+  geom_point()+
+  labs(
+    title = "Tuition fee per student versus Earning after 4 years"
+  )
+```
 
 
 
