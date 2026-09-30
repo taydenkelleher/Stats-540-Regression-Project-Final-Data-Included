@@ -126,7 +126,7 @@ df <- read.csv("final_data.csv")
 ## EDA Begins
 
 ```{r}
-ggplot(df, aes(x = "EARN_MDN_4YR")) +
+ggplot(df, aes(x = EARN_MDN_4YR)) +
   geom_histogram()
 ```
 
@@ -162,5 +162,38 @@ ggplot(df, aes(x=TUITFTE, y = EARN_MDN_4YR)) +
   )
 ```
 
+```{r}
+ggplot(df, aes(x=OVERALL_YR2_N, y = EARN_MDN_4YR)) +
+  geom_point()+
+  labs(
+    title = "Overall 2 year completion rate versus Earning after 4 years"
+  )
+```
 
+
+```{r}
+ggplot(df, aes(x=INEXPFTE, y = EARN_MDN_4YR)) +
+  geom_point()+
+  labs(
+    title = "Instructional Experiatures per student versus Earning after 4 years"
+  )
+
+```
+
+
+```{r}
+ggplot(df, aes(x=AVGFACSAL, y = EARN_MDN_4YR)) +
+  geom_point()+
+  labs(
+    title = "Average Faculty Salary versus Earning after 4 years"
+  )
+```
+
+```{r}
+ggplot(df, aes(x=PFTFAC, y = EARN_MDN_4YR)) +
+  geom_point()+
+  labs(
+    title = "Percent of Faculty Full Time versus Earning after 4 years"
+  )
+```
 
