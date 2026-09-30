@@ -18,3 +18,113 @@ Our data is from the college scorecard data, [here](https://collegescorecard.ed.
 We are looking at the most recent field of study dataset. This consists of 229188 observations with 174 columns, regarding students in the 2019/2020 school year.
 
 Our institutional dataset is also pretty big, with 6694 rows and 3306 columns. We will join these dataframes on the university id, after reducing them in size.
+
+This is how we loaded our data in.
+
+```{r, eval=F}
+data <- read_csv("Most-Recent-Cohorts-Field-of-Study.csv") #on individuals
+institution_data <- read_csv("MERGED2019_20_PP.csv") #on institutions
+```
+
+We then joined using left join.
+
+```{r, eval=F}
+joined_df <- institution_data %>%
+  left_join(data, by = "OPEID6")
+```
+
+This gave us a monstrous dataframe, with 3500 columns, and over 200000 rows. To reduce our data to a more managable size, we did the following.
+
+```{r, eval=F}
+df_clean <- joined_df[, colMeans(is.na(joined_df)) <= 0.50]
+df_clean <- df_clean %>% 
+  select(where(~ n_distinct(.) > 1))
+
+threshold <- 0.01
+
+df <- df_clean %>%
+  select(where(~ {
+    if (!is.numeric(.x)) {
+      TRUE
+    } else {
+      v <- var(.x, na.rm = TRUE)
+      !is.na(v) && v >= threshold
+    }
+  }))
+```
+
+This still had over 2000 columns. So what we did was we chose X many predictors that we thought could be interesting, to investigate further.
+
+```{r}
+interesting_col_names <- c(
+  "EARN_MDN_4YR",
+  "OPEID6",
+  "CITY",
+  "SCH_DEG",
+  "MAIN.x",
+  "NUMBRANCH",
+  "PREDDEG",
+  "HIGHDEG",
+  "ST_FIPS",
+  "REGION",
+  "ADM_RATE_ALL",
+  "PCIP12",
+  "PCIP24",
+  "PCIP51",
+  "PCIP52",
+  "UGDS",
+  "UG25ABV",
+  "UGDS_WHITE",
+  "UGDS_BLACK",
+  "UGDS_HISP",
+  "PPTUG_EF",
+  "COSTT4_A",
+  "TUITIONFEE_IN",
+  "TUITIONFEE_OUT",
+  "TUITFTE",
+  "INEXPFTE",
+  "AVGFACSAL",
+  "PFTFAC",
+  "C150_4",
+  "PFTFTUG1_EF",
+  "D150_4",
+  "C150_4_WHITE",
+  "C150_4_BLACK",
+  "C150_4_HISP",
+  "DEATH_YR8_RT",
+  "COMP_ORIG_YR8_RT",
+  "COMP_4YR_TRANS_YR8_RT",
+  "PELL_COMP_4YR_TRANS_YR8_RT",
+  "PELL_WDRAW_ORIG_YR8_RT",
+  "NOPELL_WDRAW_ORIG_YR8_RT",
+  "NOT1STGEN_COMP_4YR_TRANS_YR2_RT",
+  "FIRSTGEN_COMP_ORIG_YR2_RT",
+  "TUITFTE",
+  "OVERALL_YR2_N",
+  "DEBT_MDN"
+)
+```
+
+We then created a dataframe with those interesting attributes. However, we were think about using career earnings as an outcome, thus we only are interested on results with a numeric earnings. Thus we get rid of all rows that have a character or na value in `EARN_MDN_4YR` column, or career earnings after 4 years. 
+
+But we still had the issue that there were many different columns with many NA values, some close to 40%. For simplicity, we decided to drop NA values. This has the potential to introduce bias in our data, because there could be some other factor influencing career earnings and whether or not there are many NA values. 
+
+```{r, eval=F}
+very_trimmed_df <- df[interesting_col_names]
+
+final_df <- very_trimmed_df[!is.na(as.numeric(as.character(very_trimmed_df$EARN_MDN_4YR))), ]
+
+na_df  <- na.omit(final_df)
+```
+
+This gives us the following dataset.
+
+```{r}
+df <- read.csv("final_data.csv")
+```
+
+## EDA Begins
+
+
+
+
