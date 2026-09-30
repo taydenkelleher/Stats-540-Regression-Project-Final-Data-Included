@@ -101,7 +101,13 @@ interesting_col_names <- c(
   "FIRSTGEN_COMP_ORIG_YR2_RT",
   "TUITFTE",
   "OVERALL_YR2_N",
-  "DEBT_MDN"
+  "DEBT_MDN",
+  "CREDDESC",
+  "DEBT_ALL_STGP_ANY_MEAN",
+  "BBRR1_FED_UG_DFLT",
+  "DISTANCE",
+  "CONTROL.x",
+  "CONTROL.y"
 )
 ```
 
