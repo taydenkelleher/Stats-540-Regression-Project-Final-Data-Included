@@ -1,0 +1,20 @@
+---
+title: "EDA"
+author: "Ayden Kelleher, Daniel Havens, Douglas Roth"
+format: pdf
+editor: source
+---
+
+```{r, error=F, warning=F, message=F}
+library(tidyverse)
+library(ggplot2)
+library(dplyr)
+```
+
+## Data Summary
+
+Our data is from the college scorecard data, [here](https://collegescorecard.ed.gov/data/)
+
+We are looking at the most recent field of study dataset. This consists of 229188 observations with 174 columns, regarding students in the 2019/2020 school year.
+
+Our institutional dataset is also pretty big, with 6694 rows and 3306 columns. We will join these dataframes on the university id, after reducing them in size.
