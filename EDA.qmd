@@ -161,6 +161,8 @@ For a quick way to get rid of some strongly correlated predictors, we fit an AIC
 
 
 
+### Some plots
+
 ```{r}
 ggplot(df, aes(x = EARN_MDN_4YR)) +
   geom_histogram()
