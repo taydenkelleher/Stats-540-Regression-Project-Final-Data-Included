@@ -9,6 +9,7 @@ editor: source
 library(tidyverse)
 library(ggplot2)
 library(dplyr)
+library(corrplot)
 ```
 
 ## Data Summary
@@ -134,6 +135,22 @@ df <- read.csv("final_data.csv")
 We still have some decisions to make regading what data to use. Much of the variables we have are 75% or more just `PS`, which likely means primarily suppressed, which means not included since the sample size was too small, or the data was private. Since many of the predictors consist of things like debt after college, it makes sense that it is disclosed to the public (people like us). 
 
 ## EDA Begins
+
+```{r}
+df  %>% select(is.numeric, - OPEID6) %>% #only continuous output, without passenger id
+cor(use = "pairwise.complete.obs") %>%
+corrplot(type='lower',
+         method = "color",       # Use colored squares/cells for compactness
+         order = "hclust",       # Cluster similar variables together
+         tl.cex = 0.5,           # Shrink text label size (adjust as needed)
+         tl.col = "black",       # Text label color
+         tl.srt = 45,            # Rotate text labels 45 degrees
+         diag = FALSE)           # Hide self-correlations on the diagonal
+
+
+
+```
+
 
 ```{r}
 ggplot(df, aes(x = EARN_MDN_4YR)) +
