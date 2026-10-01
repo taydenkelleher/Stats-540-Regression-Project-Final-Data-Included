@@ -241,6 +241,28 @@ ggplot(df, aes(x=SATMTMID - SATVRMID, y = EARN_MDN_4YR)) +
   )
 ```
 
+```{r}
+
+
+
+new_df <- df
+new_df %>%
+  # 1. Group the data and calculate the mean for each group
+  group_by(CREDDESC) %>%
+  summarize(mean_value = mean(EARN_MDN_4YR, na.rm = TRUE)) %>%
+  
+  # 2. Pass the aggregated data directly into ggplot
+  ggplot(aes(x = CREDDESC, y = mean_value, fill = CREDDESC)) +
+  geom_col() +  # geom_col() plots the actual values provided in y
+  labs(
+    title = "Mean Value by Group",
+    x = "Degree",
+    y = "Average Mdn Earnings by Group"
+  ) +
+  theme_minimal()
+```
+
+
 
 
 
