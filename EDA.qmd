@@ -136,6 +136,8 @@ We still have some decisions to make regading what data to use. Much of the vari
 
 ## EDA Begins
 
+The first thing we will do in our EDA is plot a correlation matrix. This gives us an idea of what predictors are similar to others, and which are uncorrelated. The key points to remember are that our outcome variable is `EARN_MDN_4YR`, so predictors with stronger correlation to it are likely good predictors.
+
 ```{r}
 df  %>% select(is.numeric, - OPEID6) %>% #only continuous output, without passenger id
 cor(use = "pairwise.complete.obs") %>%
@@ -150,6 +152,13 @@ corrplot(type='lower',
 
 
 ```
+
+#### Choosing better predictors
+
+For a quick way to get rid of some strongly correlated predictors, we fit an AIC model, and saw which variables were least important.
+
+<paste here>
+
 
 
 ```{r}
