@@ -250,6 +250,17 @@ ggplot(df, aes(x=SATMTMID - SATVRMID, y = EARN_MDN_4YR)) +
 
 ### Convert the following to numeric
 
+One thing we ran into when using the data from individuals is that many of them have private information. This was recorded as `PS`, rather than a number recorded. So for many predictors, such as debt, we have to decide how to deal with them. One way is to impute the data. We could impute using mean imputation, where we set every `PS` values as the mean, either mean of everyone or mean of group, or we could predict what they are based off of other values, probably using a prebuilt function. We could also set them all to zero. We could also drop all the `PS` values. 
+
+#### Ruling out drop `PS`
+
+When we look at the data, some of the predictors with `PS` can contain up to 90 percent of datapoints containing `PS`. If we through all of those points out, we would lose most of our data. Thus dropping all observations with `PS` would work for at most 1 variable, with only 50 of observations recorded as `PS`. 
+
+#### Selecting few of these
+
+Due to the difficulties in working with much of this data, we are only going to work with 2-4 of these predictors.
+
+
 DEATH_YR8_RT, COMP_ORIG_YR8_RT, COMP_4YR_TRANS_YR8_RT, PELL_COMP_4YR_TRANS_YR8_RT,  PELL_WDRAW_ORIG_YR8_RT, NOPELL_WDRAW_ORIG_YR8_RT, NOT1STGEN_COMP_4YR_TRANS_YR2_RT, FIRSTGEN_COMP_ORIG_YR2_RT, OVERALL_YR2_N, DEBT_MDN, DEBT_ALL_STGP_ANY_MEAN, BBRR1_FED_UG_DFLT
 
 
