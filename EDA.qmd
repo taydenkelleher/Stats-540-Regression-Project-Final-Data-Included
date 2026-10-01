@@ -262,8 +262,38 @@ new_df %>%
   theme_minimal()
 ```
 
+```{r}
+ggplot(df, aes(x=C150_4 , y = EARN_MDN_4YR)) +
+  geom_point()+
+  labs(
+    title = "First Time Student Completion Rate vs Earnings"
+  )
+```
+
+```{r}
+ggplot(df, aes(x=C150_4_BLACK , y = C150_4_WHITE)) +
+  geom_point()+
+  labs(
+    title = "First Time Black Student Completion Rate vs First Time White Student Completion Rate"
+  )
+```
+
+```{r}
+ggplot(df, aes(x=C150_4_HISP , y = C150_4_WHITE)) +
+  geom_point()+
+  labs(
+    title = "First Time Hispanic Student Completion Rate vs First Time White Student Completion Rate"
+  )
+```
 
 
+```{r}
+ggplot(df, aes(x=C150_4_HISP , y = C150_4_BLACK)) +
+  geom_point()+
+  labs(
+    title = "First Time Hispanic Student Completion Rate vs First Time Black Student Completion Rate"
+  )
+```
 
 
 ## TODO
