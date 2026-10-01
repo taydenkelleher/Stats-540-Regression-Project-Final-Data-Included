@@ -107,7 +107,9 @@ interesting_col_names <- c(
   "BBRR1_FED_UG_DFLT",
   "DISTANCE",
   "CONTROL.x",
-  "CONTROL.y"
+  "CONTROL.y",
+  "SATVRMID",
+  "SATMTMID"
 )
 ```
 
@@ -205,6 +207,40 @@ hist(as.numeric(df$DEATH_YR8_RT)) #need to convert
 
 plot(as.numeric(df$DEATH_YR8_RT), df$EARN_MDN_4YR)
 ```
+
+
+```{r}
+ggplot(df, aes(x=SATVRMID, y = EARN_MDN_4YR)) +
+  geom_point()+
+  labs(
+    title = "SAT Median Critical Reading Score versus Earning after 4 years"
+  )
+```
+
+```{r}
+ggplot(df, aes(x=SATMTMID, y = EARN_MDN_4YR)) +
+  geom_point()+
+  labs(
+    title = "SAT Median Math Score versus Earning after 4 years"
+  )
+```
+
+```{r}
+ggplot(df, aes(x=SATVRMID, y = SATMTMID)) +
+  geom_point()+
+  labs(
+    title = "SAT Median Critical Reading Score versus SAT Median Math Score"
+  )
+```
+
+```{r}
+ggplot(df, aes(x=SATMTMID - SATVRMID, y = EARN_MDN_4YR)) +
+  geom_point()+
+  labs(
+    title = "SAT Median Math Minus SAT Median Critical Thinking versus Earnings"
+  )
+```
+
 
 
 
