@@ -163,6 +163,10 @@ For a quick way to get rid of some strongly correlated predictors, we fit an AIC
 
 ### Some plots
 
+Now lets quickly investigate a few variables relationship with the outcome variable.
+
+First, lets look at the distribution of the outcome variable. We see that it looks to be roughly lognormally distributed. This is reasonable for a outcome variable. 
+
 ```{r}
 ggplot(df, aes(x = EARN_MDN_4YR)) +
   geom_histogram()
@@ -199,8 +203,22 @@ ggplot(df, aes(x=UGDS, y = EARN_MDN_4YR)) +
 cor(df$UGDS, df$EARN_MDN_4YR)
 ```
 
+#### Debt versus earnings
+
+
+
 ```{r}
-plot(x=as.numeric(df$DEBT_MDN), y=df$EARN_MDN_4YR)
+debt_df <- tibble(
+  Y=df$EARN_MDN_4YR,
+  X=as.numeric(df$DEBT_MDN)
+)
+debt_df <- debt_df %>% filter(X != "PS") 
+ggplot(debt_df, aes(x=X, y = Y)) +
+  geom_point()+
+  labs(
+    title = "Tuition fee per student versus Earning after 4 years"
+  ) + 
+  geom_smooth(method="lm")
 
 #cor(df$DEBT_MDN, df$EARN_MDN_4YR)
 
