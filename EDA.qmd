@@ -168,25 +168,41 @@ ggplot(df, aes(x = EARN_MDN_4YR)) +
   geom_histogram()
 ```
 
+#### Admission Rate versus Earnings 
+
+One things college hopefuls are aware of when applying to college is admission rate, where it is generally thought that better schools have lower admission rates. Below is the scatterplot. We can see that there seems to be a meaningful higher wages for very low acceptance rates, under .15. It also looks like majority of the data has an acceptance rate between .5 and .9. The correlation between these two variables is $-.26$, which suggest this is a reasonable predictor.
+
 ```{r}
+simple_df <- df[c("EARN_MDN_4YR", "ADM_RATE_ALL")]
+simple_model <- lm(EARN_MDN_4YR~ADM_RATE_ALL, simple_df)
+
 ggplot(df, aes(x=ADM_RATE_ALL, y = EARN_MDN_4YR)) +
   geom_point()+
   labs(
     title = "Admission Rate versus Earning after 4 years"
-  )
+  ) +
+  geom_smooth(method = "lm")
+cor(df$EARN_MDN_4YR, df$ADM_RATE_ALL)
 ```
 
 ```{r}
+simple_df <- df[c("EARN_MDN_4YR", "UGDS")]
+simple_model <- lm(EARN_MDN_4YR~UGDS, simple_df)
+
+
 ggplot(df, aes(x=UGDS, y = EARN_MDN_4YR)) +
   geom_point()+
   labs(
     title = "Enrollment of undergraduate certificate/degree-seeking students versus Earning after 4 years"
-  )
+  ) +
+  geom_smooth(method = "lm")
+cor(df$UGDS, df$EARN_MDN_4YR)
 ```
 
 ```{r}
-plot(as.numeric(df$DEBT_MDN), y=df$EARN_MDN_4YR)
+plot(x=as.numeric(df$DEBT_MDN), y=df$EARN_MDN_4YR)
 
+#cor(df$DEBT_MDN, df$EARN_MDN_4YR)
 
 ```
 
@@ -230,10 +246,22 @@ ggplot(df, aes(x=PFTFAC, y = EARN_MDN_4YR)) +
   )
 ```
 
+#### Death Rate
+
+One predictor we were interested in was death rate. One issue we ran into was much of the data was recorded as `PS`, instead of a numeric value. For now, lets just look at the datapoints with a non PS value. The histogram of outputs looks to be roughly lognormal (or some other right skewed distribution). Plotting out these points, we can see a real relationship. 
+
 ```{r}
 hist(as.numeric(df$DEATH_YR8_RT)) #need to convert 
 
-plot(as.numeric(df$DEATH_YR8_RT), df$EARN_MDN_4YR)
+dead_df <- df %>% filter(DEATH_YR8_RT != "PS") 
+dead_df$DEATH_YR8_RT <- as.numeric(dead_df$DEATH_YR8_RT)
+ggplot(dead_df, aes(x=DEATH_YR8_RT, y = EARN_MDN_4YR)) +
+  geom_point()+
+  labs(
+    title = "Death Rate versus Earning after 4 years"
+  ) + 
+  geom_smooth(method="lm")
+cor(dead_df$DEATH_YR8_RT, dead_df$EARN_MDN_4YR)
 ```
 
 
@@ -242,7 +270,8 @@ ggplot(df, aes(x=SATVRMID, y = EARN_MDN_4YR)) +
   geom_point()+
   labs(
     title = "SAT Median Critical Reading Score versus Earning after 4 years"
-  )
+  ) + 
+  geom_smooth(method="lm")
 ```
 
 ```{r}
@@ -250,7 +279,8 @@ ggplot(df, aes(x=SATMTMID, y = EARN_MDN_4YR)) +
   geom_point()+
   labs(
     title = "SAT Median Math Score versus Earning after 4 years"
-  )
+  ) +
+  geom_smooth(method="lm")
 ```
 
 ```{r}
@@ -266,8 +296,20 @@ ggplot(df, aes(x=SATMTMID - SATVRMID, y = EARN_MDN_4YR)) +
   geom_point()+
   labs(
     title = "SAT Median Math Minus SAT Median Critical Thinking versus Earnings"
-  )
+  ) + 
+  geom_smooth(method="lm")
 ```
+
+```{r}
+simple_df <- tibble(
+  Y=df$EARN_MDN_4YR,
+  X1=df$SATMTMID + df$SATVRMID,
+  X2=df$SATMTMID - df$SATVRMID
+)
+sat_model <- lm(Y~X1+X2, simple_df)
+summary(sat_model)
+```
+
 
 ```{r}
 
