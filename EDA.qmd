@@ -114,9 +114,9 @@ interesting_col_names <- c(
 )
 ```
 
-We then created a dataframe with those interesting attributes. However, we were think about using career earnings as an outcome, thus we only are interested on results with a numeric earnings. Thus we get rid of all rows that have a character or na value in `EARN_MDN_4YR` column, or career earnings after 4 years. 
+We then created a dataframe with those interesting attributes. However, we were think about using career earnings as an outcome, thus we only are interested on results with a numeric earnings. Thus we get rid of all rows that have a character or na value in `EARN_MDN_4YR` column, or career earnings after 4 years.
 
-But we still had the issue that there were many different columns with many NA values, some close to 40%. For simplicity, we decided to drop NA values. This has the potential to introduce bias in our data, because there could be some other factor influencing career earnings and whether or not there are many NA values. 
+But we still had the issue that there were many different columns with many NA values, some close to 40%. For simplicity, we decided to drop NA values. This has the potential to introduce bias in our data, because there could be some other factor influencing career earnings and whether or not there are many NA values.
 
 ```{r, eval=F}
 very_trimmed_df <- df[interesting_col_names]
@@ -132,7 +132,7 @@ All of this was done on a different document. Loading in the result from that pr
 df <- read.csv("final_data.csv")
 ```
 
-We still have some decisions to make regading what data to use. Much of the variables we have are 75% or more just `PS`, which likely means primarily suppressed, which means not included since the sample size was too small, or the data was private. Since many of the predictors consist of things like debt after college, it makes sense that it is disclosed to the public (people like us). 
+We still have some decisions to make regading what data to use. Much of the variables we have are 75% or more just `PS`, which likely means primarily suppressed, which means not included since the sample size was too small, or the data was private. Since many of the predictors consist of things like debt after college, it makes sense that it is disclosed to the public (people like us).
 
 ## EDA Begins
 
@@ -159,8 +159,6 @@ For a quick way to get rid of some strongly correlated predictors, we fit an AIC
 
 <paste here>
 
-
-
 ### Some plots
 
 ```{r}
@@ -168,7 +166,7 @@ ggplot(df, aes(x = EARN_MDN_4YR)) +
   geom_histogram()
 ```
 
-#### Admission Rate versus Earnings 
+#### Admission Rate versus Earnings
 
 One things college hopefuls are aware of when applying to college is admission rate, where it is generally thought that better schools have lower admission rates. Below is the scatterplot. We can see that there seems to be a meaningful higher wages for very low acceptance rates, under .15. It also looks like majority of the data has an acceptance rate between .5 and .9. The correlation between these two variables is $-.26$, which suggest this is a reasonable predictor.
 
@@ -219,7 +217,6 @@ plot(as.numeric(df$OVERALL_YR2_N), df$EARN_MDN_4YR)
 
 ```
 
-
 ```{r}
 ggplot(df, aes(x=INEXPFTE, y = EARN_MDN_4YR)) +
   geom_point()+
@@ -228,7 +225,6 @@ ggplot(df, aes(x=INEXPFTE, y = EARN_MDN_4YR)) +
   )
 
 ```
-
 
 ```{r}
 ggplot(df, aes(x=AVGFACSAL, y = EARN_MDN_4YR)) +
@@ -248,7 +244,7 @@ ggplot(df, aes(x=PFTFAC, y = EARN_MDN_4YR)) +
 
 #### Death Rate
 
-One predictor we were interested in was death rate. One issue we ran into was much of the data was recorded as `PS`, instead of a numeric value. For now, lets just look at the datapoints with a non PS value. The histogram of outputs looks to be roughly lognormal (or some other right skewed distribution). Plotting out these points, we can see a real relationship. 
+One predictor we were interested in was death rate. One issue we ran into was much of the data was recorded as `PS`, instead of a numeric value. For now, lets just look at the datapoints with a non PS value. The histogram of outputs looks to be roughly lognormal (or some other right skewed distribution). Plotting out these points, we can see a real relationship.
 
 ```{r}
 hist(as.numeric(df$DEATH_YR8_RT)) #need to convert 
@@ -263,7 +259,6 @@ ggplot(dead_df, aes(x=DEATH_YR8_RT, y = EARN_MDN_4YR)) +
   geom_smooth(method="lm")
 cor(dead_df$DEATH_YR8_RT, dead_df$EARN_MDN_4YR)
 ```
-
 
 ```{r}
 ggplot(df, aes(x=SATVRMID, y = EARN_MDN_4YR)) +
@@ -310,7 +305,6 @@ sat_model <- lm(Y~X1+X2, simple_df)
 summary(sat_model)
 ```
 
-
 ```{r}
 
 
@@ -356,7 +350,6 @@ ggplot(df, aes(x=C150_4_HISP , y = C150_4_WHITE)) +
   )
 ```
 
-
 ```{r}
 ggplot(df, aes(x=C150_4_HISP , y = C150_4_BLACK)) +
   geom_point()+
@@ -365,28 +358,47 @@ ggplot(df, aes(x=C150_4_HISP , y = C150_4_BLACK)) +
   )
 ```
 
-
 ## TODO
-
-
 
 ### Convert the following to numeric
 
-One thing we ran into when using the data from individuals is that many of them have private information. This was recorded as `PS`, rather than a number recorded. So for many predictors, such as debt, we have to decide how to deal with them. One way is to impute the data. We could impute using mean imputation, where we set every `PS` values as the mean, either mean of everyone or mean of group, or we could predict what they are based off of other values, probably using a prebuilt function. We could also set them all to zero. We could also drop all the `PS` values. 
+One thing we ran into when using the data from individuals is that many of them have private information. This was recorded as `PS`, rather than a number recorded. So for many predictors, such as debt, we have to decide how to deal with them. One way is to impute the data. We could impute using mean imputation, where we set every `PS` values as the mean, either mean of everyone or mean of group, or we could predict what they are based off of other values, probably using a prebuilt function. We could also set them all to zero. We could also drop all the `PS` values.
 
 #### Ruling out drop `PS`
 
-When we look at the data, some of the predictors with `PS` can contain up to 90 percent of datapoints containing `PS`. If we through all of those points out, we would lose most of our data. Thus dropping all observations with `PS` would work for at most 1 variable, with only 50 of observations recorded as `PS`. 
+When we look at the data, some of the predictors with `PS` can contain up to 90 percent of datapoints containing `PS`. If we through all of those points out, we would lose most of our data. Thus dropping all observations with `PS` would work for at most 1 variable, with only 50 of observations recorded as `PS`.
 
 #### Selecting few of these
 
 Due to the difficulties in working with much of this data, we are only going to work with 2-4 of these predictors.
 
-
-DEATH_YR8_RT, COMP_ORIG_YR8_RT, COMP_4YR_TRANS_YR8_RT, PELL_COMP_4YR_TRANS_YR8_RT,  PELL_WDRAW_ORIG_YR8_RT, NOPELL_WDRAW_ORIG_YR8_RT, NOT1STGEN_COMP_4YR_TRANS_YR2_RT, FIRSTGEN_COMP_ORIG_YR2_RT, OVERALL_YR2_N, DEBT_MDN, DEBT_ALL_STGP_ANY_MEAN, BBRR1_FED_UG_DFLT
-
+DEATH_YR8_RT, COMP_ORIG_YR8_RT, COMP_4YR_TRANS_YR8_RT, PELL_COMP_4YR_TRANS_YR8_RT, PELL_WDRAW_ORIG_YR8_RT, NOPELL_WDRAW_ORIG_YR8_RT, NOT1STGEN_COMP_4YR_TRANS_YR2_RT, FIRSTGEN_COMP_ORIG_YR2_RT, OVERALL_YR2_N, DEBT_MDN, DEBT_ALL_STGP_ANY_MEAN, BBRR1_FED_UG_DFLT
 
 ```{r}
 #str(df)
 ```
 
+## Multicollinearity and Related Simple Linear Models
+
+There are several items which have especially high correlation. As such, we are generally concerned with removing them to prevent any multicollinearity. Among these is are C150_4 and C150_4_WHITE, which have high correlation. For these, the correlation and fitted simple linear model are as follows:
+
+```{r}
+cor(df$C150_4, df$C150_4_WHITE)
+summary(lm(C150_4 ~ C150_4_WHITE, data = df))
+```
+
+This makes sense, as the total C150_4 value is predominantly from white students, and minorities are related to this by direct evaluation.
+
+On the other hand COSTT4_A and TUITIONFEE_IN are also highly correlated. This is because cost of attendance is highly correlated to in-state tuition.
+
+```{r}
+cor(df$COSTT4_A, df$TUITIONFEE_IN)
+summary(lm(TUITIONFEE_IN ~ COSTT4_A, data = df))
+```
+
+Finally, PFTFTUG1_EF and UG25ABV are also highly correlated. This is because TODO (I forget what these variables are). Here, we ommit PFTFTUG1_EF in lieu of UG25ABV.
+
+```{r}
+cor(df$UG25ABV, df$PFTFTUG1_EF)
+summary(lm(UG25ABV ~ PFTFTUG1_EF, data = df))
+```

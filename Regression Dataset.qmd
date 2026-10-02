@@ -152,20 +152,18 @@ interesting_col_names <- c(
 
 ```
 
-
 ```{r}
 colnames(df)
 ```
+
 ```{r}
 colnames(df)[1000:2000]
 
 ```
 
-
 ```{r}
 very_trimmed_df <- df[interesting_col_names]
 ```
-
 
 ```{r}
 write.csv2(very_trimmed_df, "very_trimmed_df.csv")
@@ -182,6 +180,3 @@ na_df  <- na.omit(final_df)
 ```{r}
 write.csv(na_df, "final_data.csv")
 ```
-
-
-
