@@ -280,23 +280,12 @@ ggplot(dead_df, aes(x=DEATH_YR8_RT, y = EARN_MDN_4YR)) +
 cor(dead_df$DEATH_YR8_RT, dead_df$EARN_MDN_4YR)
 ```
 
-```{r}
-ggplot(df, aes(x=SATVRMID, y = EARN_MDN_4YR)) +
-  geom_point()+
-  labs(
-    title = "SAT Median Critical Reading Score versus Earning after 4 years"
-  ) + 
-  geom_smooth(method="lm")
-```
+#### SAT SCORES
 
-```{r}
-ggplot(df, aes(x=SATMTMID, y = EARN_MDN_4YR)) +
-  geom_point()+
-  labs(
-    title = "SAT Median Math Score versus Earning after 4 years"
-  ) +
-  geom_smooth(method="lm")
-```
+We had two different SAT scores, median critical reading, and median math scores for the college. These have a very strong correlation, so we probably cannot use both as they are. 
+
+One potential way we could use both is using a linear combination of both. We did to linear combinations, $X1=M+R$ and $X2=M-R$, which look to be mostly uncorrelated. We also fit a linear model using this in the appendix, which has an R squared value of 0.09969, which considering we only used 2 highly correlated predictors from 50, that fairly good. 
+
 
 ```{r}
 ggplot(df, aes(x=SATVRMID, y = SATMTMID)) +
@@ -306,29 +295,11 @@ ggplot(df, aes(x=SATVRMID, y = SATMTMID)) +
   )
 ```
 
-```{r}
-ggplot(df, aes(x=SATMTMID - SATVRMID, y = EARN_MDN_4YR)) +
-  geom_point()+
-  labs(
-    title = "SAT Median Math Minus SAT Median Critical Thinking versus Earnings"
-  ) + 
-  geom_smooth(method="lm")
-```
+#### Earnings by Educational Level
+
+We can look at the earning levels by educational level. We can see that more education tends to lead to more earnings, as expected
 
 ```{r}
-simple_df <- tibble(
-  Y=df$EARN_MDN_4YR,
-  X1=df$SATMTMID + df$SATVRMID,
-  X2=df$SATMTMID - df$SATVRMID
-)
-sat_model <- lm(Y~X1+X2, simple_df)
-summary(sat_model)
-```
-
-```{r}
-
-
-
 new_df <- df
 new_df %>%
   # 1. Group the data and calculate the mean for each group
@@ -346,36 +317,20 @@ new_df %>%
   theme_minimal()
 ```
 
+#### First Time Student Completion Rate
+
+Looking through the data, we were curious at what first time student completion rate meant in terms of career earning. We also saw different variables for different demographics. Fitting a simple linear model, we get an r squared value of 0.07988169. 
+
 ```{r}
 ggplot(df, aes(x=C150_4 , y = EARN_MDN_4YR)) +
   geom_point()+
   labs(
     title = "First Time Student Completion Rate vs Earnings"
-  )
-```
+  ) + 
+  geom_smooth(method="lm")
 
-```{r}
-ggplot(df, aes(x=C150_4_BLACK , y = C150_4_WHITE)) +
-  geom_point()+
-  labs(
-    title = "First Time Black Student Completion Rate vs First Time White Student Completion Rate"
-  )
-```
-
-```{r}
-ggplot(df, aes(x=C150_4_HISP , y = C150_4_WHITE)) +
-  geom_point()+
-  labs(
-    title = "First Time Hispanic Student Completion Rate vs First Time White Student Completion Rate"
-  )
-```
-
-```{r}
-ggplot(df, aes(x=C150_4_HISP , y = C150_4_BLACK)) +
-  geom_point()+
-  labs(
-    title = "First Time Hispanic Student Completion Rate vs First Time Black Student Completion Rate"
-  )
+hmmm <- lm(EARN_MDN_4YR~C150_4, df)
+summary(hmmm)$r.squared
 ```
 
 ## TODO
@@ -422,3 +377,82 @@ Finally, PFTFTUG1_EF and UG25ABV are also highly correlated. This is because one
 cor(df$UG25ABV, df$PFTFTUG1_EF)
 summary(lm(UG25ABV ~ PFTFTUG1_EF, data = df))
 ```
+
+
+
+## Appendix
+
+#### SAT Scores
+
+```{r}
+ggplot(df, aes(x=SATVRMID, y = EARN_MDN_4YR)) +
+  geom_point()+
+  labs(
+    title = "SAT Median Critical Reading Score versus Earning after 4 years"
+  ) + 
+  geom_smooth(method="lm")
+```
+
+```{r}
+ggplot(df, aes(x=SATMTMID, y = EARN_MDN_4YR)) +
+  geom_point()+
+  labs(
+    title = "SAT Median Math Score versus Earning after 4 years"
+  ) +
+  geom_smooth(method="lm")
+```
+
+```{r}
+ggplot(df, aes(x=SATVRMID, y = SATMTMID)) +
+  geom_point()+
+  labs(
+    title = "SAT Median Critical Reading Score versus SAT Median Math Score"
+  )
+```
+
+```{r}
+ggplot(df, aes(x=SATMTMID - SATVRMID, y = EARN_MDN_4YR)) +
+  geom_point()+
+  labs(
+    title = "SAT Median Math Minus SAT Median Critical Thinking versus Earnings"
+  ) + 
+  geom_smooth(method="lm")
+```
+
+```{r}
+simple_df <- tibble(
+  Y=df$EARN_MDN_4YR,
+  X1=df$SATMTMID + df$SATVRMID,
+  X2=df$SATMTMID - df$SATVRMID
+)
+sat_model <- lm(Y~X1+X2, simple_df)
+summary(sat_model)
+```
+
+#### First Time Completion Rates By Demographic
+
+```{r}
+ggplot(df, aes(x=C150_4_BLACK , y = C150_4_WHITE)) +
+  geom_point()+
+  labs(
+    title = "First Time Black Student Completion Rate vs First Time White Student Completion Rate"
+  )
+```
+
+```{r}
+ggplot(df, aes(x=C150_4_HISP , y = C150_4_WHITE)) +
+  geom_point()+
+  labs(
+    title = "First Time Hispanic Student Completion Rate vs First Time White Student Completion Rate"
+  )
+```
+
+```{r}
+ggplot(df, aes(x=C150_4_HISP , y = C150_4_BLACK)) +
+  geom_point()+
+  labs(
+    title = "First Time Hispanic Student Completion Rate vs First Time Black Student Completion Rate"
+  )
+```
+
+
