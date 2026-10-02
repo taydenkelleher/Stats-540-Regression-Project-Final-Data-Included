@@ -416,7 +416,7 @@ cor(df$COSTT4_A, df$TUITIONFEE_IN)
 summary(lm(TUITIONFEE_IN ~ COSTT4_A, data = df))
 ```
 
-Finally, PFTFTUG1_EF and UG25ABV are also highly correlated. This is because TODO (I forget what these variables are). Here, we ommit PFTFTUG1_EF in lieu of UG25ABV.
+Finally, PFTFTUG1_EF and UG25ABV are also highly correlated. This is because one is the percent of undergraduate that are working part time, and the other is the percent of undergraduates under 25 years old. Given most people who do undergraduate education past 25 have to support themselves, this seems reasonable. Here, we ommit PFTFTUG1_EF in lieu of UG25ABV, because working while in college probably correlates with a worse educational experience, and there could be an outside confounder that influence working during undergrad, and influences career earnings. 
 
 ```{r}
 cor(df$UG25ABV, df$PFTFTUG1_EF)
