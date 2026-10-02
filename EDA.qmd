@@ -132,7 +132,7 @@ All of this was done on a different document. Loading in the result from that pr
 df <- read.csv("final_data.csv")
 ```
 
-We still have some decisions to make regading what data to use. Much of the variables we have are 75% or more just `PS`, which likely means primarily suppressed, which means not included since the sample size was too small, or the data was private. Since many of the predictors consist of things like debt after college, it makes sense that it is disclosed to the public (people like us).
+We still have some decisions to make regading what data to use. Much of the variables we have are 75% or more just `PS`, which likely means primarily suppressed, which means not included since the sample size was too small, or the data was private. Since many of the predictors consist of things like debt after college, it makes sense that it is disclosed to the public (people like us). Our final result is a dataframe consisting of 52 columns, and roughly 30000 observations, which is a much more managable size. 
 
 ## EDA Begins
 
@@ -174,6 +174,8 @@ ggplot(df, aes(x = EARN_MDN_4YR)) +
 
 One things college hopefuls are aware of when applying to college is admission rate, where it is generally thought that better schools have lower admission rates. Below is the scatterplot. We can see that there seems to be a meaningful higher wages for very low acceptance rates, under .15. It also looks like majority of the data has an acceptance rate between .5 and .9. The correlation between these two variables is $-.26$, which suggest this is a reasonable predictor.
 
+Looking at the fitted simple linear model summary, we have an R squared value of 0.06823, which is not great, given how many predictors we have, is fairly good. The p values are very small, but that just means it is unlikely the data comes from a constant model. Given our sample size is so big, even small variations from constant lead to tiny p values. 
+
 ```{r}
 simple_df <- df[c("EARN_MDN_4YR", "ADM_RATE_ALL")]
 simple_model <- lm(EARN_MDN_4YR~ADM_RATE_ALL, simple_df)
@@ -185,24 +187,14 @@ ggplot(df, aes(x=ADM_RATE_ALL, y = EARN_MDN_4YR)) +
   ) +
   geom_smooth(method = "lm")
 cor(df$EARN_MDN_4YR, df$ADM_RATE_ALL)
+
+summary(simple_model)
 ```
 
-```{r}
-simple_df <- df[c("EARN_MDN_4YR", "UGDS")]
-simple_model <- lm(EARN_MDN_4YR~UGDS, simple_df)
-
-
-ggplot(df, aes(x=UGDS, y = EARN_MDN_4YR)) +
-  geom_point()+
-  labs(
-    title = "Enrollment of undergraduate certificate/degree-seeking students versus Earning after 4 years"
-  ) +
-  geom_smooth(method = "lm")
-cor(df$UGDS, df$EARN_MDN_4YR)
-```
 
 #### Debt versus earnings
 
+One predictor we would like to use is debt. However, not everyone has a recorded debt. So for eda, we will filter for having a numeric value, and impute later. The given slope is small. The R squared value for the simple linear model is 0.003076, which means the model accounts for 0.3 percent of variation from the mean, which isn't great. 
 
 
 ```{r}
@@ -214,20 +206,30 @@ debt_df <- debt_df %>% filter(X != "PS")
 ggplot(debt_df, aes(x=X, y = Y)) +
   geom_point()+
   labs(
-    title = "Tuition fee per student versus Earning after 4 years"
+    title = "Debt versus Earning after 4 years"
   ) + 
   geom_smooth(method="lm")
-
+debt_model <- lm(Y~X, debt_df)
+summary(debt_model)
 #cor(df$DEBT_MDN, df$EARN_MDN_4YR)
 
 ```
+
+#### Net Tuition Revenue per student versus Earnings
+
+One thing that feels like it should correlate with good schools is tuition, where better schools cost more. Looking at the fitted linear model, we see that it has an R squared of 0.06083, which is means it accounts for about 6 percent of error from the mean is explained by net tuition. 
+
 
 ```{r}
 ggplot(df, aes(x=TUITFTE, y = EARN_MDN_4YR)) +
   geom_point()+
   labs(
     title = "Tuition fee per student versus Earning after 4 years"
-  )
+  ) + 
+  geom_smooth(method="lm")
+
+tuit_model <- lm(EARN_MDN_4YR ~ TUITFTE, df)
+summary(tuit_model)
 ```
 
 ```{r}
