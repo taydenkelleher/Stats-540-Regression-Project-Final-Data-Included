@@ -37,6 +37,17 @@ ed_data$PREDDEG <- as.factor(ed_data$PREDDEG)
 ed_data$NUMBRANCH <- as.factor(ed_data$NUMBRANCH)
 ed_data$MAIN.x <-as.factor(ed_data$MAIN.x)
 ed_data$SCH_DEG <- as.factor(ed_data$SCH_DEG)
+#Now lets turn all of our numeric data that got converted into character back into numeric data, changing NA values to zero for simplicity
+cols_to_convert <- c("DEBT_MDN", "DEATH_YR8_RT", "COMP_ORIG_YR8_RT", "COMP_4YR_TRANS_YR8_RT", "PELL_COMP_4YR_TRANS_YR8_RT", "PELL_WDRAW_ORIG_YR8_RT", "NOPELL_WDRAW_ORIG_YR8_RT", "NOT1STGEN_COMP_4YR_TRANS_YR2_RT","FIRSTGEN_COMP_ORIG_YR2_RT", "DEBT_MDN","CREDDESC","DEBT_ALL_STGP_ANY_MEAN","BBRR1_FED_UG_DFLT"  )
+
+new_ed_data <- ed_data %>%
+  mutate(across(
+    all_of(cols_to_convert),
+    ~ {
+      x <- suppressWarnings(as.numeric(.x))
+      replace(x, is.na(x), 0)
+    }
+  ))
 
 # Let's center our data first...  Fix this shit later.  It isn't doing anything right now.
 centered_ed_data <- ed_data
