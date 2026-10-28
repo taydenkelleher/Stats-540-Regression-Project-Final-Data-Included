@@ -46,24 +46,60 @@ rm(numeric_cols)
 
 #model_1 <- lm(EARN_MDN_4YR ~ , data = centered_ed_data)
 #model_2 <- lm(EARN_MDN_4YR ~ , data = centered_ed_data)
-model_3 <- lm(EARN_MDN_4YR ~ (TUITIONFEE_IN + CONTROL.x + ADM_RATE_ALL)^2 + PREDDEG + HIGHDEG + C150_4 + DEBT_MDN, data = centered_ed_data)
+model_3 <- lm(EARN_MDN_4YR ~ (TUITIONFEE_IN + CONTROL.x + ADM_RATE_ALL)^2 + PREDDEG + HIGHDEG + C150_4 + C150_4:ADM_RATE_ALL + DEBT_MDN, data = centered_ed_data)
 ```
 
 ## 1. Multiple regression models (10 pts)
 
 At least two candidate models with several predictors are fit. Coefficients are interpreted correctly, holding the other predictors fixed. Categorical predictors are coded and interpreted correctly.
 
+### Model 1
+
+### Model 2
+
+### Model 3
+
+For our third, model, we took a more hand-built approach. We included in-state tuition fee, institution type (public, private non-profit, or private for-profit), and admission rate, as well as all degree two interaction terms between these; predicted degree accomplishment, highest degree achieved, completion rate, median debt, and the interaction term between completion rate and institution admition rate. This gives us the following:
+
+$$ Y = ... $$
+
+Here, we interpret...
+
 ## 2. Interactions and polynomial terms (10 pts)
 
 At least one interaction or polynomial term is considered, with a reason for it. It is tested (for example, a partial F test or a test) and the result is stated. An interaction plot or fitted-curve plot is included where relevant. A well-reasoned term that turns out not to help still earns full credit.
+
+### Model 1
+
+### Model 2
+
+### Model 3
+
+Here, we include degree two interaction terms between in-state tuition, institution type, and admission rate. This is because the effect of in-state tuition can be mitigated by private institutions waiving tuition, in-state tuition can often be waived by higher admittance requirements (reflected by admission rate), and institution type and admission rate together can tell us how selective the institution is, often indicating how well perceived the institution is in the job market.
+
+There is also room for C150_4 to have interaction terms with practically every other variable present, as drop-out rate is a very useful indicator of median pay after graduation. Given the nature of graduation rate and admittance criteria, they will likely have interaction in that the more strict the admittance criteria, the higher the graduation rate will likely be. As such, we try to account for how this effects pay by including an interaction term.
+
+The remaining items: median debt, predicted degree, and highest degree received, all indicate base-line requirements for most students at these institutions, and help us account for what the average student at these institutions look like.
 
 ## 3. Diagnostics (10 pts)
 
 Residual plots and checks for the model’s assumptions are shown. Outliers, influential points, or multicollinearity (VIF) are examined. The report says what the checks found, even if nothing was wrong.
 
+### Model 1
+
+### Model 2
+
+### Model 3
+
 ## 4. Model selection and justification (10 pts)
 
 Candidate models are compared with a stated criterion (adjusted $R^2$, AIC, BIC, $C_p$, or an F test). The final model is chosen and the choice is justified in words. NoteSTAT 540 groups: deeper selection justification In addition to the above, a 540 group compares at least three candidate models using at least two different criteria. Where the criteria disagree, the report explains why and says what the group traded off (fit against parsimony, or prediction against interpretation). Award 10 only if this is done. This is part of the criterion, not extra points.
+
+### Model 1
+
+### Model 2
+
+### Model 3
 
 ## 5. Integration and reproducibility (10 pts) - COMPLETE
 
