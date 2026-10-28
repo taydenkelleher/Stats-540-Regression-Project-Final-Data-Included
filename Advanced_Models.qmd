@@ -26,6 +26,10 @@ set.seed(6979)
 
 ```{r}
 ed_data <- read.csv("final_data.csv")
+#Remove entries without median debt reported, and turn it into a numeric.
+ed_data <- ed_data |> subset(DEBT_MDN != "PS")
+ed_data$DEBT_MDN <- as.numeric(ed_data$DEBT_MDN)
+# Clean up all factors which were imported as integers.
 ed_data$CONTROL.x <- as.factor(ed_data$CONTROL.x)
 ed_data$REGION <- as.factor(ed_data$REGION)
 ed_data$HIGHDEG <-as.factor(ed_data$HIGHDEG)
@@ -34,7 +38,7 @@ ed_data$NUMBRANCH <- as.factor(ed_data$NUMBRANCH)
 ed_data$MAIN.x <-as.factor(ed_data$MAIN.x)
 ed_data$SCH_DEG <- as.factor(ed_data$SCH_DEG)
 
-# Let's center our data first...
+# Let's center our data first...  Fix this shit later.  It isn't doing anything right now.
 centered_ed_data <- ed_data
 numeric_cols <- sapply(df, is.numeric)
 centered_ed_data[numeric_cols] <- lapply(centered_ed_data[numeric_cols], scale, scale = FALSE)
@@ -42,7 +46,7 @@ rm(numeric_cols)
 
 #model_1 <- lm(EARN_MDN_4YR ~ , data = centered_ed_data)
 #model_2 <- lm(EARN_MDN_4YR ~ , data = centered_ed_data)
-#model_3 <- lm(EARN_MDN_4YR ~ CONTROL.x : TUITIONFEE_IN, data = centered_ed_data)
+model_3 <- lm(EARN_MDN_4YR ~ (TUITIONFEE_IN + CONTROL.x + ADM_RATE_ALL)^2 + PREDDEG + HIGHDEG + C150_4 + DEBT_MDN, data = centered_ed_data)
 ```
 
 ## 1. Multiple regression models (10 pts)
