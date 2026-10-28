@@ -17,12 +17,15 @@ if ((requireNamespace("erikmisc", quietly = TRUE)) == FALSE) {
   remotes::install_github("erikerhardt/erikmisc")
 }
 library(erikmisc)
+
+sets.seed(6979)
 ```
 
 ## Load the Data
 
 ```{r}
 data <- read_csv2("final_data.csv")
+
 ```
 
 ## 1. Multiple regression models (10 pts)
@@ -41,6 +44,12 @@ Residual plots and checks for the model’s assumptions are shown. Outliers, inf
 
 Candidate models are compared with a stated criterion (adjusted $R^2$, AIC, BIC, $C_p$, or an F test). The final model is chosen and the choice is justified in words. NoteSTAT 540 groups: deeper selection justification In addition to the above, a 540 group compares at least three candidate models using at least two different criteria. Where the criteria disagree, the report explains why and says what the group traded off (fit against parsimony, or prediction against interpretation). Award 10 only if this is done. This is part of the criterion, not extra points.
 
-## 5. Integration and reproducibility (10 pts)
+## 5. Integration and reproducibility (10 pts) - COMPLETE
 
 The report builds on Milestone 2 and responds to its feedback. The submission is a rendered PDF named Group_XX_Milestone3.pdf, with code visible, a seed set, and sessionInfo() present.
+
+## For Diagnostics and Reproducibility:
+
+```{r}
+sessionInfo()
+```
