@@ -10,6 +10,8 @@ editor: visual
 ```{r}
 library(tidyverse)
 library(dplyr)
+library(car)
+library(MASS)
 
 # Including my traditional diagnostics package...  See the following for details:
 # https://statacumen.com/teach/ADA1/help/Erhardt_R_Install.html
@@ -81,6 +83,11 @@ model_3 <- lm(
   + PREDDEG + HIGHDEG + C150_4 + C150_4:ADM_RATE_ALL + DEBT_MDN,
   data = centered_ed_data
 )
+model_3_unshifted <- model_3 <- lm(
+  EARN_MDN_4YR ~ (TUITIONFEE_IN + CONTROL.x + ADM_RATE_ALL)^2
+  + PREDDEG + HIGHDEG + C150_4 + C150_4:ADM_RATE_ALL + DEBT_MDN,
+  data = ed_data
+)
 ```
 
 ## 1. Multiple regression models (10 pts)
@@ -126,7 +133,11 @@ Residual plots and checks for the model’s assumptions are shown. Outliers, inf
 ### Model 3
 
 ```{r}
-e_plot_lm_diagnostics(model_3, sw_plot_set = "full")
+#e_plot_lm_diagnostics(model_3, sw_plot_set = "full")
+vif(model_3)
+bc3 <- boxcox(model_3_unshifted)
+bc3
+bc3$x[which.max(bc3$y)]
 ```
 
 ## 4. Model selection and justification (10 pts)
