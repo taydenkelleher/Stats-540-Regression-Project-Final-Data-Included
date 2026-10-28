@@ -24,8 +24,11 @@ set.seed(6979)
 ## Load the Data
 
 ```{r}
-data <- read.csv("final_data.csv")
+ed_data <- read.csv("final_data.csv")
 
+#model_1 <- lm(EARN_MDN_4YR ~ , data = ed_data)
+#model_2 <- lm(EARN_MDN_4YR ~ , data = ed_data)
+#model_3 <- lm(EARN_MDN_4YR ~ , data = ed_data)
 ```
 
 ## 1. Multiple regression models (10 pts)
