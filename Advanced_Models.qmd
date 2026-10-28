@@ -13,7 +13,7 @@ library(tidyverse)
 # Including my traditional diagnostics package...  See the following for details:
 # https://statacumen.com/teach/ADA1/help/Erhardt_R_Install.html
 # The usual function call here is e_plot_lm_diagnostics(df, sw_plot_set = "simple")
-if ((requiredNamespace("ggplot2", quietly = TRUE)) == FALSE) {
+if ((requireNamespace("erikmisc", quietly = TRUE)) == FALSE) {
   remotes::install_github("erikerhardt/erikmisc")
 }
 library(erikmisc)
