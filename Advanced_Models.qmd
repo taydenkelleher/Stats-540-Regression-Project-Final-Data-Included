@@ -19,16 +19,21 @@ if ((requireNamespace("erikmisc", quietly = TRUE)) == FALSE) {
 }
 library(erikmisc)
 
+# Set seed for reproducability.
 set.seed(6979)
 ```
 
 ## Load the Data
 
 ```{r}
+#Load the data
 ed_data <- read.csv("final_data.csv")
-#Remove entries without median debt reported, and turn it into a numeric.
+
+#Remove entries without median debt reported, and
+# turn it into numerical data.
 ed_data <- ed_data |> subset(DEBT_MDN != "PS")
 ed_data$DEBT_MDN <- as.numeric(ed_data$DEBT_MDN)
+
 # Clean up all factors which were imported as integers.
 ed_data$CONTROL.x <- as.factor(ed_data$CONTROL.x)
 ed_data$REGION <- as.factor(ed_data$REGION)
@@ -37,27 +42,45 @@ ed_data$PREDDEG <- as.factor(ed_data$PREDDEG)
 ed_data$NUMBRANCH <- as.factor(ed_data$NUMBRANCH)
 ed_data$MAIN.x <-as.factor(ed_data$MAIN.x)
 ed_data$SCH_DEG <- as.factor(ed_data$SCH_DEG)
-#Now lets turn all of our numeric data that got converted into character back into numeric data, changing NA values to zero for simplicity
-cols_to_convert <- c("DEBT_MDN", "DEATH_YR8_RT", "COMP_ORIG_YR8_RT", "COMP_4YR_TRANS_YR8_RT", "PELL_COMP_4YR_TRANS_YR8_RT", "PELL_WDRAW_ORIG_YR8_RT", "NOPELL_WDRAW_ORIG_YR8_RT", "NOT1STGEN_COMP_4YR_TRANS_YR2_RT","FIRSTGEN_COMP_ORIG_YR2_RT", "DEBT_MDN","CREDDESC","DEBT_ALL_STGP_ANY_MEAN","BBRR1_FED_UG_DFLT"  )
+
+# Turn all numeric data that got read as strings
+# back into numerical data, changing NA values to
+# zero for simplicity.
+cols_to_convert <- c(
+  "DEATH_YR8_RT",
+  "COMP_ORIG_YR8_RT",
+  "COMP_4YR_TRANS_YR8_RT",
+  "PELL_COMP_4YR_TRANS_YR8_RT",
+  "PELL_WDRAW_ORIG_YR8_RT",
+  "NOPELL_WDRAW_ORIG_YR8_RT",
+  "NOT1STGEN_COMP_4YR_TRANS_YR2_RT",
+  "FIRSTGEN_COMP_ORIG_YR2_RT",
+  "DEBT_MDN",
+  "CREDDESC",
+  "DEBT_ALL_STGP_ANY_MEAN",
+  "BBRR1_FED_UG_DFLT"
+)
 
 new_ed_data <- ed_data %>%
-  mutate(across(
-    all_of(cols_to_convert),
-    ~ {
-      x <- suppressWarnings(as.numeric(.x))
-      replace(x, is.na(x), 0)
-    }
-  ))
+  mutate(across(all_of(cols_to_convert), ~ {
+    x <- suppressWarnings(as.numeric(.x))
+    replace(x, is.na(x), 0)
+  }))
 
-# Let's center our data first...  Fix this shit later.  It isn't doing anything right now.
+# Now center our data.  Ayden, update this with "new_ed_data" if you would prefer that. - Daniel
 centered_ed_data <- ed_data
-numeric_cols <- sapply(df, is.numeric)
-centered_ed_data[numeric_cols] <- lapply(centered_ed_data[numeric_cols], scale, scale = FALSE)
+numeric_cols <- sapply(ed_data, is.numeric)
+centered_ed_data[numeric_cols] <- lapply(centered_ed_data[numeric_cols],
+                                         scale, scale = FALSE)
 rm(numeric_cols)
 
 #model_1 <- lm(EARN_MDN_4YR ~ , data = centered_ed_data)
 #model_2 <- lm(EARN_MDN_4YR ~ , data = centered_ed_data)
-model_3 <- lm(EARN_MDN_4YR ~ (TUITIONFEE_IN + CONTROL.x + ADM_RATE_ALL)^2 + PREDDEG + HIGHDEG + C150_4 + C150_4:ADM_RATE_ALL + DEBT_MDN, data = centered_ed_data)
+model_3 <- lm(
+  EARN_MDN_4YR ~ (TUITIONFEE_IN + CONTROL.x + ADM_RATE_ALL)^2
+  + PREDDEG + HIGHDEG + C150_4 + C150_4:ADM_RATE_ALL + DEBT_MDN,
+  data = centered_ed_data
+)
 ```
 
 ## 1. Multiple regression models (10 pts)
@@ -102,9 +125,13 @@ Residual plots and checks for the model’s assumptions are shown. Outliers, inf
 
 ### Model 3
 
+```{r}
+e_plot_lm_diagnostics(model_3, sw_plot_set = "full")
+```
+
 ## 4. Model selection and justification (10 pts)
 
-Candidate models are compared with a stated criterion (adjusted $R^2$, AIC, BIC, $C_p$, or an F test). The final model is chosen and the choice is justified in words. NoteSTAT 540 groups: deeper selection justification In addition to the above, a 540 group compares at least three candidate models using at least two different criteria. Where the criteria disagree, the report explains why and says what the group traded off (fit against parsimony, or prediction against interpretation). Award 10 only if this is done. This is part of the criterion, not extra points.
+Candidate models are compared with a stated criterion (adjusted $R^2$, AIC, BIC, $C_p$, or an F test). The final model is chosen and the choice is justified in words. Note: STAT 540 groups: deeper selection justification In addition to the above, a 540 group compares at least three candidate models using at least two different criteria. Where the criteria disagree, the report explains why and says what the group traded off (fit against parsimony, or prediction against interpretation). Award 10 only if this is done. This is part of the criterion, not extra points.
 
 ### Model 1
 
