@@ -18,13 +18,13 @@ if ((requireNamespace("erikmisc", quietly = TRUE)) == FALSE) {
 }
 library(erikmisc)
 
-sets.seed(6979)
+set.seed(6979)
 ```
 
 ## Load the Data
 
 ```{r}
-data <- read_csv2("final_data.csv")
+data <- read.csv("final_data.csv")
 
 ```
 
