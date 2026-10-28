@@ -25,6 +25,13 @@ set.seed(6979)
 
 ```{r}
 ed_data <- read.csv("final_data.csv")
+ed_data$CONTROL.x <- as.factor(ed_data$CONTROL.x)
+ed_data$REGION <- as.factor(ed_data$REGION)
+ed_data$HIGHDEG <-as.factor(ed_data$HIGHDEG)
+ed_data$PREDDEG <- as.factor(ed_data$PREDDEG)
+ed_data$NUMBRANCH <- as.factor(ed_data$NUMBRANCH)
+ed_data$MAIN.x <-as.factor(ed_data$MAIN.x)
+ed_data$SCH_DEG <- as.factor(ed_data$SCH_DEG)
 
 #model_1 <- lm(EARN_MDN_4YR ~ , data = ed_data)
 #model_2 <- lm(EARN_MDN_4YR ~ , data = ed_data)
