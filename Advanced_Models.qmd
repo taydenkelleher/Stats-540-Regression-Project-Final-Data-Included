@@ -1,0 +1,22 @@
+---
+title: "Advanced Models"
+format: pdf
+authors : "TBD"
+editor: visual
+---
+
+## Load packages
+
+```{r}
+library(tidyverse)
+```
+
+
+## Load the Data
+
+```{r}
+
+
+data <- read_csv2("final_data.csv")
+```
+
