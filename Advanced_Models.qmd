@@ -77,20 +77,10 @@ centered_ed_data[numeric_cols] <- lapply(centered_ed_data[numeric_cols],
 rm(numeric_cols)
 ```
 
-
 ```{r}
 model_1 <- lm(EARN_MDN_4YR ~ .-CITY-CREDDESC, data = centered_ed_data)
 model_2 <- stepAIC(model_1, direction="forward")
-model_3 <- lm(
-  EARN_MDN_4YR ~ (TUITIONFEE_IN + CONTROL.x + ADM_RATE_ALL)^2
-  + PREDDEG + HIGHDEG + C150_4 + C150_4:ADM_RATE_ALL + DEBT_MDN,
-  data = centered_ed_data
-)
-model_3_unshifted <- model_3 <- lm(
-  EARN_MDN_4YR ~ (TUITIONFEE_IN + CONTROL.x + ADM_RATE_ALL)^2
-  + PREDDEG + HIGHDEG + C150_4 + C150_4:ADM_RATE_ALL + DEBT_MDN,
-  data = ed_data
-)
+
 ```
 
 ## 1. Multiple regression models (10 pts)
@@ -103,11 +93,49 @@ At least two candidate models with several predictors are fit. Coefficients are 
 
 ### Model 3
 
-For our third, model, we took a more hand-built approach. We included in-state tuition fee, institution type (public, private non-profit, or private for-profit), and admission rate, as well as all degree two interaction terms between these; predicted degree accomplishment, highest degree achieved, completion rate, median debt, and the interaction term between completion rate and institution admition rate. This gives us the following:
+```{r}
+# Find the lm for the unshifted data, so we can get a boxcox model.
+model_3_unshifted <- lm(
+  EARN_MDN_4YR ~ (TUITIONFEE_IN + CONTROL.x + ADM_RATE_ALL)^2
+  + PREDDEG + HIGHDEG + C150_4 + C150_4:ADM_RATE_ALL + DEBT_MDN,
+  data = ed_data
+)
+# Generate boxcox model, and show plot.  Then, transform data.
+bc3 <- boxcox(model_3_unshifted)
+bc3
+bc3$x[which.max(bc3$y)]
+m3_transformed_data = ed_data
+# Apply boxcox transform.
+m3_transformed_data$EARN_MDN_4YR = ((ed_data$EARN_MDN_4YR^bc3$x[which.max(bc3$y)] - 1)/bc3$x[which.max(bc3$y)])
+# Do some cleaning up.
+rm(model_3_unshifted)
+rm(bc3)
+# Now center the data.
+centered_m3_data <- m3_transformed_data
+numeric_cols <- sapply(m3_transformed_data, is.numeric)
+centered_m3_data[numeric_cols] <- lapply(centered_m3_data[numeric_cols],
+                                         scale, scale = FALSE)
+rm(numeric_cols)
+# And finally, generate the actual model and give the summary.
+model_3 <- lm(
+  EARN_MDN_4YR ~ (TUITIONFEE_IN + CONTROL.x + ADM_RATE_ALL)^2
+  + PREDDEG + HIGHDEG + C150_4 + C150_4:ADM_RATE_ALL + DEBT_MDN,
+  data = centered_m3_data
+)
+summary(model_3)
+```
 
-$$ Y = ... $$
+For our third, model, we took a more hand-built approach. We included in-state tuition fee, institution type (public, private non-profit, or private for-profit), and admission rate, as well as all degree two interaction terms between these; predicted degree accomplishment, highest degree achieved, completion rate, median debt, and the interaction term between completion rate and institution admission rate.
 
-Here, we interpret...
+Preemptively, we examine the Box-Cox plot, and find that a transform of the data is needed. This is backed up by (TODO) the QQ-plot not being very linear, and the histogram of residuals not following a normal distribution. After this transform, we center our data to eliminate non-essential contributions of interaction and polynomial terms with the base variables.
+
+After this transform, we label our variables as follows: $Y$ as our transformed and centered version of four-year median earnings, $X_1$ as our centered in-state tuition, $X_2$ as our indicator for being a private nonprofit institution, $X_3$ as our indicator for being a private for-profit institution, $X_4$ as our centered admission rate as a decimal, $X_5$ as our indicator for predicted degree, $X_6$ and $X_7$ as our indicators for the various options of highest degree offered (master's and doctoral), $X_8$ as our centered graduation rate (TODO, check this), and $X_9$ as our centered median debt. This gives us the following model:
+
+$$ Y = 10^{-3} ( -7.157+ 2.425 \cdot 10^{-4} X_1 -4.087 X_2 + 0.7901 X_3 - 4.019 X_4 + 1.016 X_5 + 7.124 X_6 \\
++ 8.216 X_7 + 3.905 X_8 - 2.851 \cdot 10^{-5} - 1.368 \cdot 10^{-4} X_1 X_2 - 5.906 \cdot 10^{-4} X_1 X_3 \\
+- 7.555 \cdot 10^{-5} X_1 X_4 + 5.558 X_2 X_4 + 5.190 X_3 X_4 - 6.031 X_4 X_8 )$$
+
+Here, we factor the $10^{-3}$ term out to save space.
 
 ## 2. Interactions and polynomial terms (10 pts)
 
@@ -136,20 +164,8 @@ Residual plots and checks for the model’s assumptions are shown. Outliers, inf
 ### Model 3
 
 ```{r}
-#e_plot_lm_diagnostics(model_3, sw_plot_set = "full")
+e_plot_lm_diagnostics(model_3, sw_plot_set = "full")
 vif(model_3)
-bc3 <- boxcox(model_3_unshifted)
-bc3
-bc3$x[which.max(bc3$y)]
-m3_transformed_data = ed_data
-m3_transformed_data$EARN_MDN_4YR = ((ed_data$EARN_MDN_4YR^bc3$x[which.max(bc3$y)] - 1)/bc3$x[which.max(bc3$y)])
-model_3_unshifted_boxcox <- model_3 <- lm(
-  EARN_MDN_4YR ~ (TUITIONFEE_IN + CONTROL.x + ADM_RATE_ALL)^2
-  + PREDDEG + HIGHDEG + C150_4 + C150_4:ADM_RATE_ALL + DEBT_MDN,
-  data = m3_transformed_data
-)
-summary(model_3_unshifted_boxcox)
-rm(m3_transformed_data)
 ```
 
 ## 4. Model selection and justification (10 pts)
