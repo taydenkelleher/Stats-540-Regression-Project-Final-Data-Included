@@ -104,7 +104,18 @@ summary(model_1)
 
 ### Model 2
 
-Our next model is a more refined model, only using the statistically significant terms, along with statistically significant interaction terms. The way we chose these terms is we would fit models and try different interaction and polynomial terms, and if there statistically significant predictors, we would keep them, and if not, we would remove them and try something else. 
+Our next model is a more refined model, only using the statistically significant terms, along with statistically significant interaction terms. 
+
+#### Polynomial Terms
+
+The way we chose these terms is we would fit models and try different interaction and polynomial terms, and if there statistically significant predictors, we would keep them, and if not, we would remove them and try something else. For terms with very small p-values, which tell us given $\beta=0$, what is the probability that our data is at least this spread out, is very small, meaning the null model is likely wrong and there is some relationship, we chose to fit some polynomial terms, including `C150_4_WHITE` and `UGDS_WHITE`, both degree 2 to help with interpretability and because higher order polynomial terms were not as statistically significant. 
+
+`C150_4_WHITE` is Completion rate for first-time, full-time students at four-year institutions (150% of expected time to completion) for white students. Completing college is likely a good predictor of earnings after college, so it makes sense this term is statistically significant, and it could be nonlinear. We had 4 versions of the `C150_4` terms, and chose the completion rate for white students because it had the smallest p value in the full model. 
+
+We did a similar thing for `UGDS_WHITE`, which is the proportion of students that are white. We suspected that the data was nonlinear, and wanted to investigate it
+
+We also looked at a few interaction terms. 
+
 
 ```{r}
 model_2 <- lm(EARN_MDN_4YR~MAIN.x  + ADM_RATE_ALL+poly(C150_4_WHITE,2) + (PCIP51 + PCIP52)^2 + poly(UGDS_WHITE,2) + INEXPFTE + (AVGFACSAL + DEBT_ALL_STGP_ANY_MEAN + DEBT_MDN)^2 + COMP_ORIG_YR8_RT+ (DEATH_YR8_RT+PELL_COMP_4YR_TRANS_YR8_RT)^2 + NOPELL_WDRAW_ORIG_YR8_RT+ DISTANCE + (SATVRMID + SATMTMID)^2 ,data=centered_ed_data)
