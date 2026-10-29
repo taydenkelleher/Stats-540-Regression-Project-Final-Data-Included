@@ -102,7 +102,7 @@ model_3_unshifted <- lm(
 )
 # Generate boxcox model, and show plot.  Then, transform data.
 bc3 <- boxcox(model_3_unshifted)
-bc3
+#bc3
 bc3$x[which.max(bc3$y)]
 m3_transformed_data = ed_data
 # Apply boxcox transform.
@@ -136,6 +136,20 @@ $$ Y = 10^{-3} ( -7.157+ 2.425 \cdot 10^{-4} X_1 -4.087 X_2 + 0.7901 X_3 - 4.019
 - 7.555 \cdot 10^{-5} X_1 X_4 + 5.558 X_2 X_4 + 5.190 X_3 X_4 - 6.031 X_4 X_8 )$$
 
 Here, we factor the $10^{-3}$ term out to save space.
+
+To interpret this model, we begin by noting that in this model, the values of $Y$ are rather small, due both to the Box-Cox transform and the centering. As such, we go in with the knowledge that each variable is, itself, going to be rather small.
+
+For the intercept, $-7.157 \cdot 10^{-3}$, we know that this is the contribution to $Y$ in the case that a school is numerically average, with each of our indicators as zero. This is notably not the same as being an average university. The indicated $p$-value shows that this is likely non-zero.
+
+For the coefficient of $X_1$, the in-state tuition, is $2.425 \cdot 10^{-7}$. The smaller coefficient here makes sense, as in-state tuition tend to be measured in thousands of dollars. The interpretation here is that the direct (linear) contribution of in-state tuition is approximately $2.425 \cdot 10^{-7}$, meaning that the higher the in-state tuition of a university, the higher your median income four years after graduation will be. The $p$-value of this coefficient is low, indicating that it could very reasonably be zero. However, we include it as one of the interaction terms including this term has a higher $p$-value.
+
+For the coefficient of $X_2$, we find that for private nonprofit institutions, the transformed and centered median income decreases by $4.087 \cdot 10^{-3}$. The $p$-value for this coefficient is also low, so it could reasonably be zero. However, we include it as the indicator for the other option is very likely non-zero.
+
+For the coefficient of $X_3$, we find that for private for-profit institutions, the expected contribution to the transformed and adjusted median income increases by $7.901 \cdot 10^{-4}$. From the associated $t$-test and $p$-value, we know that this is very likely not zero. As such, we keep both it, and the associated indicator $X_2$.
+
+For the coefficient of $X_4$, we find that for every $1$ your decimal expression of acceptance rate increases from the mean national acceptance rate, the transformed and shifted four-year median income after graduation goes down by $4.019 \cdot 10^{-3}$. For a more readable interpretation, the more selective an institution, the higher the median pay is likely to be four years after graduation. The associated $t$-test tells us that this effect may not actually be present at all, and this coefficient may actually be zero.
+
+TODO: Continue explaining at PREDDEG3
 
 ## 2. Interactions and polynomial terms (10 pts)
 
