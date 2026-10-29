@@ -69,15 +69,18 @@ new_ed_data <- ed_data %>%
     replace(x, is.na(x), 0)
   }))
 
-# Now center our data.  Ayden, update this with "new_ed_data" if you would prefer that. - Daniel
-centered_ed_data <- ed_data
+# Now center our data. Since our original data had many character columns that should have been numeric, we must use the new_ed_data
+centered_ed_data <- new_ed_data
 numeric_cols <- sapply(ed_data, is.numeric)
 centered_ed_data[numeric_cols] <- lapply(centered_ed_data[numeric_cols],
                                          scale, scale = FALSE)
 rm(numeric_cols)
+```
 
-#model_1 <- lm(EARN_MDN_4YR ~ , data = centered_ed_data)
-#model_2 <- lm(EARN_MDN_4YR ~ , data = centered_ed_data)
+
+```{r}
+model_1 <- lm(EARN_MDN_4YR ~ .-CITY-CREDDESC, data = centered_ed_data)
+model_2 <- stepAIC(model_1, direction="forward")
 model_3 <- lm(
   EARN_MDN_4YR ~ (TUITIONFEE_IN + CONTROL.x + ADM_RATE_ALL)^2
   + PREDDEG + HIGHDEG + C150_4 + C150_4:ADM_RATE_ALL + DEBT_MDN,
