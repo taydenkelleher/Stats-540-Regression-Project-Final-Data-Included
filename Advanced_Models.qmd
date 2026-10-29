@@ -74,7 +74,9 @@ centered_ed_data <- new_ed_data
 numeric_cols <- sapply(centered_ed_data, is.numeric)
 centered_ed_data[numeric_cols] <- lapply(centered_ed_data[numeric_cols],
                                          scale, scale = FALSE)
-rm(numeric_cols)
+normalized_ed_data <- new_ed_data %>%
+  mutate(across(where(is.numeric), ~as.vector(scale(.))))
+rm(numeric_cols) #bruh why
 ```
 
 
@@ -84,12 +86,18 @@ At least two candidate models with several predictors are fit. Coefficients are 
 
 ### Model 1
 
-Our first model is going to be the full model using the centered data, minus three predictors, `CITY`, which we mostly just kept because it could be fun to look at the projected earnings later, and  `CREDDESC`, which is entirely zeros, meaning we cannot use it. The last predictor we removed was `OPEID6`, which is the unique identifier for each college, which we wanted to remove so if colleges change over time, our models adjust more, rather than hardcoding the mean for each college. We still have 50 other predictors, so we are not lacking predictors.
+Our first model is going to be the full model using the raw data for increased interpretability, minus four predictors, `CITY`, which we mostly just kept because it could be fun to look at the projected earnings later, and  `CREDDESC`, which is entirely zeros, meaning we cannot use it. The last predictor we removed was `OPEID6`, which is the unique identifier for each college, which we wanted to remove so if colleges change over time, our models adjust more, rather than hardcoding the mean for each college. The last predictor we removed was `CONTROL.x`, which is exactly the same as `CONTROL.y` but coded as integers rather than the categorical variable. We still have 49 other predictors, so we are not lacking predictors.
 
-To interpret a few of the predictors, we have the beta value associated with `ADM_RATE_ALL` is `2.903e+03`, which means that if the normalized admission rate of the school you went to increases by 1, then the centered 
+To interpret a few of the predictors, we have the beta value associated with `ADM_RATE_ALL` is `2.903e+03`, which means that if the normalized admission rate of the school you went to increases by 1, holding all else equal, then the median earnings of a student from that schools median income increases by `2.903e+03`. Note it is more applicable to say if the school acceptance rate of the school you attended increases by 1 percent (.01), then the predicted income of a graduate is `2.903`. 
+
+Another predictor to interpret is the beta value associated with `DEBT_MDN`, or the median original amount of the loan principal upon entering repayment of the school, which is `-1.460e-01`. Thus we have for every additional dollar of debt the median of your school, then the median earnings of the median earnings of graduates working and not enrolled 4 year after completing decreases by `.146`.
+
+The last predictor we will interpret is the beta value associated with `CONTROL.y`, which is Control of institution, either public, private nonprofit, or private for profit. Since this is a categorical variable, it gets dummy coded. A beta value associated with `CONTROL.yPrivate, nonprofit` of `1.111e+03  5.100e+03` tells us that the median earnings of a graduates 4 years after graduating a private, nonprofit university is `1.111e+03` more than median earnings of graduates 4 years after graduating a Private for profit school. And a beta value associated with `CONTROL.yPublic` of `1.082e+03` tells us  the median earnings of a graduates 4 years after graduating a public university is `1.082e+03` more than median earnings of graduates 4 years after graduating a Private for profit school.
+
+
 
 ```{r}
-model_1 <- lm(EARN_MDN_4YR ~ .-CITY-CREDDESC-OPEID6, data = centered_ed_data)
+model_1 <- lm(EARN_MDN_4YR ~ .-CITY-CREDDESC-OPEID6-CONTROL.x, data = new_ed_data)
 summary(model_1)
 ```
 
