@@ -77,11 +77,6 @@ centered_ed_data[numeric_cols] <- lapply(centered_ed_data[numeric_cols],
 rm(numeric_cols)
 ```
 
-```{r}
-model_1 <- lm(EARN_MDN_4YR ~ .-CITY-CREDDESC, data = centered_ed_data)
-model_2 <- stepAIC(model_1, direction="forward")
-
-```
 
 ## 1. Multiple regression models (10 pts)
 
@@ -89,7 +84,23 @@ At least two candidate models with several predictors are fit. Coefficients are 
 
 ### Model 1
 
+Our first model is going to be the full model using the centered data, minus three predictors, `CITY`, which we mostly just kept because it could be fun to look at the projected earnings later, and  `CREDDESC`, which is entirely zeros, meaning we cannot use it. The last predictor we removed was `OPEID6`, which is the unique identifier for each college, which we wanted to remove so if colleges change over time, our models adjust more, rather than hardcoding the data from before. We still have 50 other predictors, so we are not lacking predictors.
+
+```{r}
+model_1 <- lm(EARN_MDN_4YR ~ .-CITY-CREDDESC-OPEID6, data = centered_ed_data)
+summary(model_1)
+```
+
+
 ### Model 2
+
+Our next model is a more refined model, only using the statistically significant terms, along with statistically significant interaction terms. The way we chose these terms is we would fit models and try different interaction and polynomial terms, and if there statistically significant predictors, we would keep them, and if not, we would remove them and try something else. 
+
+```{r}
+model_2 <- lm(EARN_MDN_4YR~MAIN.x  + ADM_RATE_ALL+poly(C150_4_WHITE,2) + (PCIP51 + PCIP52)^2 + poly(UGDS_WHITE,2) + INEXPFTE + (AVGFACSAL + DEBT_ALL_STGP_ANY_MEAN + DEBT_MDN)^2 + COMP_ORIG_YR8_RT+ (DEATH_YR8_RT+PELL_COMP_4YR_TRANS_YR8_RT)^2 + NOPELL_WDRAW_ORIG_YR8_RT+ DISTANCE + (SATVRMID + SATMTMID)^2 ,data=centered_ed_data)
+summary(model_2)
+```
+
 
 ### Model 3
 
