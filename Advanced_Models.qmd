@@ -138,6 +138,15 @@ vif(model_3)
 bc3 <- boxcox(model_3_unshifted)
 bc3
 bc3$x[which.max(bc3$y)]
+m3_transformed_data = ed_data
+m3_transformed_data$EARN_MDN_4YR = ((ed_data$EARN_MDN_4YR^bc3$x[which.max(bc3$y)] - 1)/bc3$x[which.max(bc3$y)])
+model_3_unshifted_boxcox <- model_3 <- lm(
+  EARN_MDN_4YR ~ (TUITIONFEE_IN + CONTROL.x + ADM_RATE_ALL)^2
+  + PREDDEG + HIGHDEG + C150_4 + C150_4:ADM_RATE_ALL + DEBT_MDN,
+  data = m3_transformed_data
+)
+summary(model_3_unshifted_boxcox)
+rm(m3_transformed_data)
 ```
 
 ## 4. Model selection and justification (10 pts)
