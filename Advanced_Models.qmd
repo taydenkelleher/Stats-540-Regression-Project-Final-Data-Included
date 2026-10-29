@@ -71,7 +71,7 @@ new_ed_data <- ed_data %>%
 
 # Now center our data. Since our original data had many character columns that should have been numeric, we must use the new_ed_data
 centered_ed_data <- new_ed_data
-numeric_cols <- sapply(ed_data, is.numeric)
+numeric_cols <- sapply(centered_ed_data, is.numeric)
 centered_ed_data[numeric_cols] <- lapply(centered_ed_data[numeric_cols],
                                          scale, scale = FALSE)
 rm(numeric_cols)
@@ -84,7 +84,9 @@ At least two candidate models with several predictors are fit. Coefficients are 
 
 ### Model 1
 
-Our first model is going to be the full model using the centered data, minus three predictors, `CITY`, which we mostly just kept because it could be fun to look at the projected earnings later, and  `CREDDESC`, which is entirely zeros, meaning we cannot use it. The last predictor we removed was `OPEID6`, which is the unique identifier for each college, which we wanted to remove so if colleges change over time, our models adjust more, rather than hardcoding the data from before. We still have 50 other predictors, so we are not lacking predictors.
+Our first model is going to be the full model using the centered data, minus three predictors, `CITY`, which we mostly just kept because it could be fun to look at the projected earnings later, and  `CREDDESC`, which is entirely zeros, meaning we cannot use it. The last predictor we removed was `OPEID6`, which is the unique identifier for each college, which we wanted to remove so if colleges change over time, our models adjust more, rather than hardcoding the mean for each college. We still have 50 other predictors, so we are not lacking predictors.
+
+To interpret a few of the predictors, we have the beta value associated with `ADM_RATE_ALL` is `2.903e+03`, which means that if the normalized admission rate of the school you went to increases by 1, then the centered 
 
 ```{r}
 model_1 <- lm(EARN_MDN_4YR ~ .-CITY-CREDDESC-OPEID6, data = centered_ed_data)
