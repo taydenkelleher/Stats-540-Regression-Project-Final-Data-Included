@@ -344,18 +344,36 @@ print(vif(model_1))
 
 ### Model 2
 
+Since the assumptions for linear regression are the same for each model, we will run the same tests
+
+#### Testing for Homoscedasticity
+
+One of the assumptions for linear regression is that we have equal variance from the model. This means if we were to plot fitted values versus residuals, we should get equal spread from zero. However, after plotting that, we can see that as our predicted value gets larger, so does the variance. Thus we have evidence against our assumption of equal variance. We can confirm this by running Brown Forsythe test, which gives us a p-value of `2.2e-16`, which suggests it is unlikely our data has equal variance. This suggests a transformation of our outcome variable may be useful, such as box cox or log transformation. 
+
 ```{r}
 plot(fitted.values(model_2), residuals(model_2))
+leveneTest(residuals(model_2) ~ (fitted.values(model_2) > median(fitted.values(model_2))))
 ```
+
+#### Testing for normality
+
+One of the assumptions in regression is normally distributed errors. We will test this by plotting the qqline and qqplot. If our residuals are normally distributed, they should follow the line. If nonnormal, they will deviate from it. And since our dataset is so large, it is very unlikely this many points sampled from a normal distribution are this far off normally distributed. This again suggests some transformation of outcome variables, like box cox. 
 
 ```{r}
 qqnorm(summary(model_2)$residuals)
-qqline(summary(model_2)$residuals, col = "#008080")
+qqline(summary(model_2)$residuals)
 ```
+
+
+#### Multicollinearity
+
+To test for multicollinearity, we will calculate the vif. Using the rough calculation of a variance inflation factor of 10 or larger suggests significant correlation between predictors, we see that happens in a few locations; `C150_4_WHITE` polynomial terms, the 2 different SAT scores having a vif score of around 20 each, though their interaction term only had a vif of 3, and we will take note of `DEATH_YR8_RT` having a vif of `9.978195` and `DEATH_YR8_RT:PELL_COMP_4YR_TRANS_YR8_RT` having a vif of `9.093520`.
 
 ```{r}
 print(vif(model_2))
 ```
+
+
 
 ### Model 3
 
