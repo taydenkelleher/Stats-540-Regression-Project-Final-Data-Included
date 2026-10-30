@@ -12,6 +12,7 @@ library(tidyverse)
 library(dplyr)
 library(car)
 library(MASS)
+library(car)
 
 # Including my traditional diagnostics package...  See the following for details:
 # https://statacumen.com/teach/ADA1/help/Erhardt_R_Install.html
@@ -97,7 +98,7 @@ The last predictor we will interpret is the beta value associated with `CONTROL.
 
 
 ```{r}
-model_1 <- lm(EARN_MDN_4YR ~ .-CITY-CREDDESC-OPEID6-CONTROL.x, data = new_ed_data)
+model_1 <- lm(EARN_MDN_4YR ~ .-CITY-CREDDESC-OPEID6-CONTROL.x-TUITFTE, data = new_ed_data)
 summary(model_1)
 ```
 
@@ -268,8 +269,34 @@ Residual plots and checks for the model’s assumptions are shown. Outliers, inf
 
 ### Model 1
 
+```{r}
+plot(fitted.values(model_1), residuals(model_1))
+```
+
+```{r}
+qqnorm(summary(model_1)$residuals)
+```
+
+```{r}
+print(vif(model_1))
+```
+
+
+
+
 ### Model 2
 
+```{r}
+plot(fitted.values(model_2), residuals(model_2))
+```
+
+
+```{r}
+qqnorm(summary(model_2)$residuals)
+```
+```{r}
+print(vif(model_2))
+```
 
 
 ### Model 3
