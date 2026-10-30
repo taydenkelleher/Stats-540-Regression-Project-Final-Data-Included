@@ -221,7 +221,7 @@ At least one interaction or polynomial term is considered, with a reason for it.
 
 ### Model 1
 
-There are no interaction terms with this model.
+There are no interaction terms with this model. The full model is just meant to compare and interpret everything against each other. Therefore there is no interaction terms to allow for easy interpret ability. Additional interaction terms would unnecessarily complicate the model.
 
 ### Model 2
 
