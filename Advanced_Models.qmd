@@ -98,6 +98,9 @@ At least two candidate models with several predictors are fit. Coefficients are 
 
 Our first model is going to be the full model using the raw data for increased interpretability, minus four predictors, `CITY`, which we mostly just kept because it could be fun to look at the projected earnings later, and `CREDDESC`, which is entirely zeros, meaning we cannot use it. The last predictor we removed was `OPEID6`, which is the unique identifier for each college, which we wanted to remove so if colleges change over time, our models adjust more, rather than hardcoding the mean for each college. The last predictor we removed was `CONTROL.x`, which is exactly the same as `CONTROL.y` but coded as integers rather than the categorical variable. The last variable we got rid of was `TUITFTE` since it was causing infinite `vif`, due to it being identical to other `TUITFTE.x`. We still have 48 other predictors, so we are not lacking predictors.
 
+Our model will look like this 
+$$Y_{ij}=\beta_0+\sum_{i=1}^{48} \beta_j X_{ij} + \epsilon_{ij}$$
+
 To interpret a few of the predictors, we have the beta value associated with `ADM_RATE_ALL` is `2.903e+03`, which means that if the normalized admission rate of the school you went to increases by 1, holding all else equal, then the median earnings of a student from that schools median income increases by `2.903e+03`. Note it is more applicable to say if the school acceptance rate of the school you attended increases by 1 percent (.01), then the predicted income of a graduate is `2.903`.
 
 Another predictor to interpret is the beta value associated with `DEBT_MDN`, or the median original amount of the loan principal upon entering repayment of the school, which is `-1.460e-01`. Thus we have for every additional dollar of debt the median of your school, then the median earnings of the median earnings of graduates working and not enrolled 4 year after completing decreases by `.146`.
