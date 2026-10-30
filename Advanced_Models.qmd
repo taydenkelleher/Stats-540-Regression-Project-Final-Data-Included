@@ -98,8 +98,7 @@ At least two candidate models with several predictors are fit. Coefficients are 
 
 Our first model is going to be the full model using the raw data for increased interpretability, minus four predictors, `CITY`, which we mostly just kept because it could be fun to look at the projected earnings later, and `CREDDESC`, which is entirely zeros, meaning we cannot use it. The last predictor we removed was `OPEID6`, which is the unique identifier for each college, which we wanted to remove so if colleges change over time, our models adjust more, rather than hardcoding the mean for each college. The last predictor we removed was `CONTROL.x`, which is exactly the same as `CONTROL.y` but coded as integers rather than the categorical variable. The last variable we got rid of was `TUITFTE` since it was causing infinite `vif`, due to it being identical to other `TUITFTE.x`. We still have 48 other predictors, so we are not lacking predictors.
 
-Our model will look like this 
-$$Y_{ij}=\beta_0+\sum_{i=1}^{48} \beta_j X_{ij} + \epsilon_{ij}$$
+Our model will look like this $$Y_{ij}=\beta_0+\sum_{i=1}^{48} \beta_j X_{ij} + \epsilon_{ij}$$
 
 To interpret a few of the predictors, we have the beta value associated with `ADM_RATE_ALL` is `2.903e+03`, which means that if the normalized admission rate of the school you went to increases by 1, holding all else equal, then the median earnings of a student from that schools median income increases by `2.903e+03`. Note it is more applicable to say if the school acceptance rate of the school you attended increases by 1 percent (.01), then the predicted income of a graduate is `2.903`.
 
@@ -126,7 +125,7 @@ We did a similar thing for `UGDS_WHITE`, which is the proportion of students tha
 
 #### Interaction Terms
 
-We also looked at a few interaction terms. The `PCIP51` and `PCIP52` terms are "Percentage of degrees awarded in Health Professions And Related Programs" and "Percentage of degrees awarded in Business, Management, Marketing, And Related Support Services." Our "full" model had 4 of these terms, out of the 52 our dataset had. The two we chose had the most statistical significance, but we suspected that they interacted since other degrees exist, and degree type likely impacts earnings, so we are measuring other degrees.
+We also looked at a few interaction terms. The `PCIP51` and `PCIP52` terms are "Percentage of degrees awarded in Health Professions And Related Programs" and "Percentage of degrees awarded in Business, Management, Marketing, And Related Support Services." Our "full" model had 4 of these terms, out of the 52 our data-set had. The two we chose had the most statistical significance, but we suspected that they interacted since other degrees exist, and degree type likely impacts earnings, so we are measuring other degrees.
 
 Another group of interaction terms we got was `AVGFACSAL`, `DEBT_ALL_STGP_ANY_MEAN`, and `DEBT_MDN`, which are average faculty salary, Average Stafford and Grad PLUS loan debt disbursed at all institutions, and The median original amount of the loan principal upon entering repayment. All of these terms were statistically significant, and we were curious if they interacted, and if so how much they interacted, since staff salary may correlate with increased costs and higher debt. We were also curious how mean debt interacted with median debt, since mean is more impacted by heavy tails and we wanted some way to measure distribution of student debt.
 
@@ -374,7 +373,7 @@ leveneTest(residuals(model_2) ~ (fitted.values(model_2) > median(fitted.values(m
 
 #### Testing for normality
 
-One of the assumptions in regression is normally distributed errors. We will test this by plotting the qqline and qqplot. If our residuals are normally distributed, they should follow the line. If nonnormal, they will deviate from it. And since our dataset is so large, it is very unlikely this many points sampled from a normal distribution are this far off normally distributed. This again suggests some transformation of outcome variables, like box cox.
+One of the assumptions in regression is normally distributed errors. We will test this by plotting the qqline and qqplot. If our residuals are normally distributed, they should follow the line. If non-normal, they will deviate from it. And since our data-set is so large, it is very unlikely this many points sampled from a normal distribution are this far off normally distributed. This again suggests some transformation of outcome variables, like box cox.
 
 ```{r}
 qqnorm(summary(model_2)$residuals)
