@@ -112,9 +112,25 @@ The way we chose these terms is we would fit models and try different interactio
 
 `C150_4_WHITE` is Completion rate for first-time, full-time students at four-year institutions (150% of expected time to completion) for white students. Completing college is likely a good predictor of earnings after college, so it makes sense this term is statistically significant, and it could be nonlinear. We had 4 versions of the `C150_4` terms, and chose the completion rate for white students because it had the smallest p value in the full model. 
 
-We did a similar thing for `UGDS_WHITE`, which is the proportion of students that are white. We suspected that the data was nonlinear, and wanted to investigate it
+We did a similar thing for `UGDS_WHITE`, which is the proportion of students that are white. We suspected that the data was nonlinear, and wanted to investigate it as a polynomial. 
 
-We also looked at a few interaction terms. 
+#### Interaction Terms
+
+We also looked at a few interaction terms. The `PCIP51` and `PCIP52` terms are "Percentage of degrees awarded in Health Professions And Related Programs" and 
+"Percentage of degrees awarded in Business, Management, Marketing, And Related Support Services." Our "full" model had 4 of these terms, out of the 52 our dataset had. The two we chose had the most statistical significance, but we suspected that they interacted since other degrees exist, and degree type likely impacts earnings, so we are measuring other degrees. 
+
+Another group of interaction terms we got was `AVGFACSAL`, `DEBT_ALL_STGP_ANY_MEAN`, and `DEBT_MDN`, which are average faculty salary, Average Stafford and Grad PLUS loan debt disbursed at all institutions, and The median original amount of the loan principal upon entering repayment. All of these terms were statistically significant, and we were curious if they interacted, and if so how much they interacted, since staff salary may correlate with increased costs and higher debt. We were also curious how mean debt interacted with median debt, since mean is more impacted by heavy tails and we wanted some way to measure distribution of student debt. 
+
+#### Interpretation
+
+To interpret what a few of these values mean, we have the beta value associate with `ADM_RATE_ALL` is `4.897e+03`. Since this is not a part of any interaction terms or polynomial terms, we know that if the admission rate of the college increased by 1 percent, then the predicted Median earnings of graduates working and not enrolled 4 year after completing would increase `48.97`. 
+
+The beta value associated with `DEBT_MDN` is `-1.891e-01`, which means that the linear component of the `DEBT_MDN` is `-1.891e-01`. 
+
+The beta value assoicated with `AVGFACSAL:DEBT_MDN`, the interaction between these two predictors is `-8.150e-05` which means 
+
+AVGFACSAL:DEBT_MDN                      -8.150e-05  1.549e-05  -5.262
+DEBT_ALL_STGP_ANY_MEAN:DEBT_MDN          2.350e-05  3.510e-06   6.694
 
 
 ```{r}
