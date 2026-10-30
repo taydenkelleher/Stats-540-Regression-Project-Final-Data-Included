@@ -198,15 +198,15 @@ Here, we factor the $10^{-3}$ term out to save space.
 
 To interpret this model, we begin by noting that in this model, the values of $Y$ are rather small, due both to the Box-Cox transform and the centering. As such, we go in with the knowledge that each variable is, itself, going to be rather small.
 
-For the intercept, $-7.157 \cdot 10^{-3}$, we know that this is the contribution to $Y$ in the case that a school is numerically average, with each of our indicators as zero. This is notably not the same as being an average university. The indicated $p$-value shows that this is likely non-zero.
+For the intercept, $-7.157 \cdot 10^{-3}$, we know that this is the contribution to $Y$ in the case that a school is numerically average, with each of our indicators as zero. This is notably not the same as being an average university. The indicated $p$-value shows that this is likely zero.
 
-For the coefficient of $X_1$, the in-state tuition, is $2.425 \cdot 10^{-7}$. The smaller coefficient here makes sense, as in-state tuition tend to be measured in thousands of dollars. The interpretation here is that the direct (linear) contribution of in-state tuition is approximately $2.425 \cdot 10^{-7}$, meaning that the higher the in-state tuition of a university, the higher your median income four years after graduation will be. The $p$-value of this coefficient is low, indicating that it could very reasonably be zero. However, we include it as one of the interaction terms including this term has a higher $p$-value.
+For the coefficient of $X_1$, the in-state tuition, is $2.425 \cdot 10^{-7}$. The smaller coefficient here makes sense, as in-state tuition tend to be measured in thousands of dollars. The interpretation here is that the direct (linear) contribution of in-state tuition is approximately $2.425 \cdot 10^{-7}$, meaning that the higher the in-state tuition of a university, the higher your median income four years after graduation will be. The $p$-value of this coefficient is low, indicating that it is very likely non-zero.
 
-For the coefficient of $X_2$, we find that for private nonprofit institutions, the transformed and centered median income decreases by $4.087 \cdot 10^{-3}$. The $p$-value for this coefficient is also low, so it could reasonably be zero. However, we include it as the indicator for the other option is very likely non-zero.
+For the coefficient of $X_2$, we find that for private nonprofit institutions, the transformed and centered median income decreases by $4.087 \cdot 10^{-3}$. The $p$-value for this coefficient is also low, similar to the above, indicating that it is likely non-zero.
 
-For the coefficient of $X_3$, we find that for private for-profit institutions, the expected contribution to the transformed and adjusted median income increases by $7.901 \cdot 10^{-4}$. From the associated $t$-test and $p$-value, we know that this is very likely not zero. As such, we keep both it, and the associated indicator $X_2$.
+For the coefficient of $X_3$, we find that for private for-profit institutions, the expected contribution to the transformed and adjusted median income increases by $7.901 \cdot 10^{-4}$. From the associated $t$-test and $p$-value, we know that this is very likely to actually be zero.
 
-For the coefficient of $X_4$, we find that for every $1$ your decimal expression of acceptance rate increases from the mean national acceptance rate, the transformed and shifted four-year median income after graduation goes down by $4.019 \cdot 10^{-3}$. For a more readable interpretation, the more selective an institution, the higher the median pay is likely to be four years after graduation. The associated $t$-test tells us that this effect may not actually be present at all, and this coefficient may actually be zero.
+For the coefficient of $X_4$, we find that for every $1$ your decimal expression of acceptance rate increases from the mean national acceptance rate, the transformed and shifted four-year median income after graduation goes down by $4.019 \cdot 10^{-3}$. For a more readable interpretation, the more selective an institution, the higher the median pay is likely to be four years after graduation. The associated $t$-test tells us that this effect is significant, and that the coefficient is almost certainly not zero.
 
 Similar interpretations are available for the remaining variables. However, following the discussion after class with the instructor, they are omitted here due to our already excessive number of variables, so as to keep this write-up to a readable length.
 
@@ -228,7 +228,7 @@ To test if the polynomial and interaction terms are significant, we will train r
 
 #### C150_WHITE, Degree 2 Polynomial Term
 
-One variable that had a small p value in the full model was `C150_WHITE`, which is Completion rate for first-time, full-time students at four-year institutions (150% of expected time to completion) for white students. There were some other `C150` terms, including pooled term, and categories for black and hispanic students. These other terms were not super significant, so were looked to drop some of the variables, but wanted to keep some nonlinear information from the variable, so we decided to add a degree 2 polynomial term. After doing a partial f test, we have a p value of `0.000417`, which suggests the linear model does not explain everything. 
+One variable that had a small p value in the full model was `C150_WHITE`, which is Completion rate for first-time, full-time students at four-year institutions (150% of expected time to completion) for white students. There were some other `C150` terms, including pooled term, and categories for black and hispanic students. These other terms were not super significant, so were looked to drop some of the variables, but wanted to keep some nonlinear information from the variable, so we decided to add a degree 2 polynomial term. After doing a partial f test, we have a p value of `0.000417`, which suggests the linear model does not explain everything.
 
 ```{r}
 model_2_reduced <- lm(EARN_MDN_4YR~MAIN.x  + ADM_RATE_ALL+(C150_4_WHITE) + (PCIP51 + PCIP52)^2 + poly(UGDS_WHITE,2) + INEXPFTE + (AVGFACSAL + DEBT_ALL_STGP_ANY_MEAN + DEBT_MDN)^2 + COMP_ORIG_YR8_RT+ (DEATH_YR8_RT+PELL_COMP_4YR_TRANS_YR8_RT) + NOPELL_WDRAW_ORIG_YR8_RT+ DISTANCE + (SATVRMID + SATMTMID)^2 ,data=centered_ed_data)
@@ -238,7 +238,7 @@ rm(model_2_reduced)
 
 #### UGDS_WHITE Variable, Degree 2 Polynomial Term
 
-`UGDS_WHITE`, which represents Total share of enrollment of undergraduate degree-seeking students who are white, is similar to `C150_WHITE`. There are other UGDS terms, the nominal UGDS and specific ones for black and hispanic students, but again the `UGDS_WHITE` had the smallest p value in the model, and we wanted to drop variables, but not lose nonlinear data, so we added a polynomial term. After running a partial f test, we get that the p value is `3.394e-08` which suggests the polynomial terms explains real variation in the data. 
+`UGDS_WHITE`, which represents Total share of enrollment of undergraduate degree-seeking students who are white, is similar to `C150_WHITE`. There are other UGDS terms, the nominal UGDS and specific ones for black and hispanic students, but again the `UGDS_WHITE` had the smallest p value in the model, and we wanted to drop variables, but not lose nonlinear data, so we added a polynomial term. After running a partial f test, we get that the p value is `3.394e-08` which suggests the polynomial terms explains real variation in the data.
 
 ```{r}
 model_2_reduced <- lm(EARN_MDN_4YR~MAIN.x  + ADM_RATE_ALL+poly(C150_4_WHITE,2) + (PCIP51 + PCIP52)^2 + UGDS_WHITE + INEXPFTE + (AVGFACSAL + DEBT_ALL_STGP_ANY_MEAN + DEBT_MDN)^2 + COMP_ORIG_YR8_RT+ (DEATH_YR8_RT+PELL_COMP_4YR_TRANS_YR8_RT)^2 + NOPELL_WDRAW_ORIG_YR8_RT+ DISTANCE + (SATVRMID + SATMTMID)^2 ,data=centered_ed_data)
@@ -248,7 +248,7 @@ rm(model_2_reduced)
 
 #### Interaction of PCIP51 and PCIP52
 
-For these terms, they represent Percentage of degrees awarded in Health Professions And Related Programs and Percentage of degrees awarded in Business, Management, Marketing, And Related Support Services respectively. Again, we have 50 other terms of this style representing share of degrees awarded by other departments. We wanted this to be interpretable, but to include some of the nonlinear information in the data. After computing a partial f test, we get a p-value of `0.0004809`, which suggests our interaction term represents a real interaction in the data. 
+For these terms, they represent Percentage of degrees awarded in Health Professions And Related Programs and Percentage of degrees awarded in Business, Management, Marketing, And Related Support Services respectively. Again, we have 50 other terms of this style representing share of degrees awarded by other departments. We wanted this to be interpretable, but to include some of the nonlinear information in the data. After computing a partial f test, we get a p-value of `0.0004809`, which suggests our interaction term represents a real interaction in the data.
 
 ```{r}
 model_2_reduced <- lm(EARN_MDN_4YR~MAIN.x  + ADM_RATE_ALL+poly(C150_4_WHITE,2) + (PCIP51 + PCIP52) + poly(UGDS_WHITE,2) + INEXPFTE + (AVGFACSAL + DEBT_ALL_STGP_ANY_MEAN + DEBT_MDN)^2 + COMP_ORIG_YR8_RT+ (DEATH_YR8_RT+PELL_COMP_4YR_TRANS_YR8_RT)^2 + NOPELL_WDRAW_ORIG_YR8_RT+ DISTANCE + (SATVRMID + SATMTMID)^2 ,data=centered_ed_data)
@@ -258,7 +258,7 @@ rm(model_2_reduced)
 
 #### Interaction of AVGFACSAL, DEBT_ALL_STGP_ANY_MEAN, and DEBT_MDN
 
-AVGFACSAL is average faculty salary, DEBT_ALL_STGP_ANY_MEAN is Average Stafford and Grad PLUS loan debt disbursed at all institutions, and The median original amount of the loan principal upon entering repayment at the institution. All of these likely correlate to higher costs of schooling which could impact career earnigns, and we wanted to see how they interact with each other. Computing a partial f test, we get a p value of `2.2e-16` which suggests our interaction has real effects on the data. 
+AVGFACSAL is average faculty salary, DEBT_ALL_STGP_ANY_MEAN is Average Stafford and Grad PLUS loan debt disbursed at all institutions, and The median original amount of the loan principal upon entering repayment at the institution. All of these likely correlate to higher costs of schooling which could impact career earnigns, and we wanted to see how they interact with each other. Computing a partial f test, we get a p value of `2.2e-16` which suggests our interaction has real effects on the data.
 
 ```{r}
 model_2_reduced <- lm(EARN_MDN_4YR~MAIN.x  + ADM_RATE_ALL+poly(C150_4_WHITE,2) + (PCIP51 + PCIP52)^2 + poly(UGDS_WHITE,2) + INEXPFTE + (AVGFACSAL + DEBT_ALL_STGP_ANY_MEAN + DEBT_MDN) + COMP_ORIG_YR8_RT+ (DEATH_YR8_RT+PELL_COMP_4YR_TRANS_YR8_RT)^2 + NOPELL_WDRAW_ORIG_YR8_RT+ DISTANCE + (SATVRMID + SATMTMID)^2 ,data=centered_ed_data)
@@ -268,7 +268,7 @@ rm(model_2_reduced)
 
 #### Interaction of DEATH_YR8_RT and PELL_COMP_4YR_TRANS_YR8_RT
 
-DEATH_YR8_RT is Percent died within 8 years at original institution and PELL_COMP_4YR_TRANS_YR8_RT represents Percent of students who received a Pell Grant at the institution and who transferred to a 4-year institution and completed within 8 years. Death rate likely correlates with other things that correlate to worse education, and being elegible for Pell Grant also likely correlates with these confounders that make completing education more difficult. We were curious if these had any real interaction. After completing a partial f test, we got a p value of `0.000884` which suggests the interaction is statistically significant. 
+DEATH_YR8_RT is Percent died within 8 years at original institution and PELL_COMP_4YR_TRANS_YR8_RT represents Percent of students who received a Pell Grant at the institution and who transferred to a 4-year institution and completed within 8 years. Death rate likely correlates with other things that correlate to worse education, and being elegible for Pell Grant also likely correlates with these confounders that make completing education more difficult. We were curious if these had any real interaction. After completing a partial f test, we got a p value of `0.000884` which suggests the interaction is statistically significant.
 
 ```{r}
 model_2_reduced <- lm(EARN_MDN_4YR~MAIN.x  + ADM_RATE_ALL+poly(C150_4_WHITE,2) + (PCIP51 + PCIP52)^2 + poly(UGDS_WHITE,2) + INEXPFTE + (AVGFACSAL + DEBT_ALL_STGP_ANY_MEAN + DEBT_MDN)^2 + COMP_ORIG_YR8_RT+ (DEATH_YR8_RT+PELL_COMP_4YR_TRANS_YR8_RT) + NOPELL_WDRAW_ORIG_YR8_RT+ DISTANCE + (SATVRMID + SATMTMID)^2 ,data=centered_ed_data)
@@ -278,7 +278,7 @@ rm(model_2_reduced)
 
 #### Interaction of SATVRMID and SATMTMID
 
-The last interaction term we used was between the two SAT scores. In EDA, we observed these two variables are strongly correlated with each other, but in the full model they were strongly correlated with each other. Thus we wanted to do see what the interaction was and what would happen. After running a partial f test, we get that a p value of `0.0001664 ` which suggest the interaction is real. One other potential explaination is that this is bascially a squared term for SAT scores, since the SAT scores are so strongly correlated and SAT scores predict earning of graduates. 
+The last interaction term we used was between the two SAT scores. In EDA, we observed these two variables are strongly correlated with each other, but in the full model they were strongly correlated with each other. Thus we wanted to do see what the interaction was and what would happen. After running a partial f test, we get that a p value of `0.0001664` which suggest the interaction is real. One other potential explaination is that this is bascially a squared term for SAT scores, since the SAT scores are so strongly correlated and SAT scores predict earning of graduates.
 
 ```{r}
 model_2_reduced <- lm(EARN_MDN_4YR~MAIN.x  + ADM_RATE_ALL+poly(C150_4_WHITE,2) + (PCIP51 + PCIP52)^2 + poly(UGDS_WHITE,2) + INEXPFTE + (AVGFACSAL + DEBT_ALL_STGP_ANY_MEAN + DEBT_MDN)^2 + COMP_ORIG_YR8_RT+ (DEATH_YR8_RT+PELL_COMP_4YR_TRANS_YR8_RT)^2 + NOPELL_WDRAW_ORIG_YR8_RT+ DISTANCE + (SATVRMID + SATMTMID) ,data=centered_ed_data)
