@@ -133,9 +133,15 @@ To interpret what a few of these values mean, we have the beta value associate w
 
 The beta value associated with `DEBT_MDN` is `-1.891e-01`, which means that the linear component of the `DEBT_MDN` is `-1.891e-01`.
 
-The beta value associated with `AVGFACSAL:DEBT_MDN`, the interaction between these two predictors is `-8.150e-05` which means
+The beta value associated with `AVGFACSAL:DEBT_MDN`, the interaction between these two predictors is `-8.150e-05` which means the slope of `DEBT_MDN` increases by `-8.150e-05` for every increase of `AVGFACSAL` by 1, and vice versa. The beta value associated with `DEBT_ALL_STGP_ANY_MEAN:DEBT_MDN` is `2.350e-05`, which means that the slope of `DEBT_ALL_STGP_ANY_MEAN` increases by `2.350e-05` for every increase of 1 in `DEBT_MDN`, and vice versa. 
 
-AVGFACSAL:DEBT_MDN -8.150e-05 1.549e-05 -5.262 DEBT_ALL_STGP_ANY_MEAN:DEBT_MDN 2.350e-05 3.510e-06 6.694
+We did not have any categorical variables in this to interpret for this model. 
+
+```{r}
+model_2 <- lm(EARN_MDN_4YR~MAIN.x  + ADM_RATE_ALL+poly(C150_4_WHITE,2) + (PCIP51 + PCIP52)^2 + poly(UGDS_WHITE,2) + INEXPFTE + (AVGFACSAL + DEBT_ALL_STGP_ANY_MEAN + DEBT_MDN)^2 + COMP_ORIG_YR8_RT+ (DEATH_YR8_RT+PELL_COMP_4YR_TRANS_YR8_RT)^2 + NOPELL_WDRAW_ORIG_YR8_RT+ DISTANCE + (SATVRMID + SATMTMID)^2 ,data=centered_ed_data)
+summary(model_2)
+```
+
 
 ```{r}
 model_2 <- lm(EARN_MDN_4YR~MAIN.x  + ADM_RATE_ALL+poly(C150_4_WHITE,2) + (PCIP51 + PCIP52)^2 + poly(UGDS_WHITE,2) + INEXPFTE + (AVGFACSAL + DEBT_ALL_STGP_ANY_MEAN + DEBT_MDN)^2 + COMP_ORIG_YR8_RT+ (DEATH_YR8_RT+PELL_COMP_4YR_TRANS_YR8_RT)^2 + NOPELL_WDRAW_ORIG_YR8_RT+ DISTANCE + (SATVRMID + SATMTMID)^2 ,data=centered_ed_data)
@@ -353,18 +359,36 @@ print(vif(model_1))
 
 ### Model 2
 
+Since the assumptions for linear regression are the same for each model, we will run the same tests
+
+#### Testing for Homoscedasticity
+
+One of the assumptions for linear regression is that we have equal variance from the model. This means if we were to plot fitted values versus residuals, we should get equal spread from zero. However, after plotting that, we can see that as our predicted value gets larger, so does the variance. Thus we have evidence against our assumption of equal variance. We can confirm this by running Brown Forsythe test, which gives us a p-value of `2.2e-16`, which suggests it is unlikely our data has equal variance. This suggests a transformation of our outcome variable may be useful, such as box cox or log transformation. 
+
 ```{r}
 plot(fitted.values(model_2), residuals(model_2))
+leveneTest(residuals(model_2) ~ (fitted.values(model_2) > median(fitted.values(model_2))))
 ```
+
+#### Testing for normality
+
+One of the assumptions in regression is normally distributed errors. We will test this by plotting the qqline and qqplot. If our residuals are normally distributed, they should follow the line. If nonnormal, they will deviate from it. And since our dataset is so large, it is very unlikely this many points sampled from a normal distribution are this far off normally distributed. This again suggests some transformation of outcome variables, like box cox. 
 
 ```{r}
 qqnorm(summary(model_2)$residuals)
-qqline(summary(model_2)$residuals, col = "#008080")
+qqline(summary(model_2)$residuals)
 ```
+
+
+#### Multicollinearity
+
+To test for multicollinearity, we will calculate the vif. Using the rough calculation of a variance inflation factor of 10 or larger suggests significant correlation between predictors, we see that happens in a few locations; `C150_4_WHITE` polynomial terms, the 2 different SAT scores having a vif score of around 20 each, though their interaction term only had a vif of 3, and we will take note of `DEATH_YR8_RT` having a vif of `9.978195` and `DEATH_YR8_RT:PELL_COMP_4YR_TRANS_YR8_RT` having a vif of `9.093520`.
 
 ```{r}
 print(vif(model_2))
 ```
+
+
 
 ### Model 3
 
@@ -415,6 +439,25 @@ For outliers and influential points, we do find that there are several points wi
 Candidate models are compared with a stated criterion (adjusted $R^2$, AIC, BIC, $C_p$, or an F test). The final model is chosen and the choice is justified in words. Note: STAT 540 groups: deeper selection justification In addition to the above, a 540 group compares at least three candidate models using at least two different criteria. Where the criteria disagree, the report explains why and says what the group traded off (fit against parsimony, or prediction against interpretation). Award 10 only if this is done. This is part of the criterion, not extra points.
 
 ### Model Selection
+
+The two benchmarks we will use to measure how well our models perform are `R^2` and `AIC`. 
+
+#### R squared
+
+```{r}
+summary(model_1)$r.sq
+summary(model_2)$r.sq
+summary(model_3)$r.sq
+```
+### AIC
+
+```{r}
+extractAIC(model_1)[2]
+extractAIC(model_2)[2]
+extractAIC(model_3)[2]
+```
+
+After looking at these measures
 
 ## 5. Integration and reproducibility (10 pts) - COMPLETE
 
