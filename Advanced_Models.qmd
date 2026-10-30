@@ -98,8 +98,7 @@ At least two candidate models with several predictors are fit. Coefficients are 
 
 Our first model is going to be the full model using the raw data for increased interpretability, minus four predictors, `CITY`, which we mostly just kept because it could be fun to look at the projected earnings later, and `CREDDESC`, which is entirely zeros, meaning we cannot use it. The last predictor we removed was `OPEID6`, which is the unique identifier for each college, which we wanted to remove so if colleges change over time, our models adjust more, rather than hardcoding the mean for each college. The last predictor we removed was `CONTROL.x`, which is exactly the same as `CONTROL.y` but coded as integers rather than the categorical variable. The last variable we got rid of was `TUITFTE` since it was causing infinite `vif`, due to it being identical to other `TUITFTE.x`. We still have 48 other predictors, so we are not lacking predictors.
 
-Our model will look like this 
-$$Y_{ij}=\beta_0+\sum_{i=1}^{48} \beta_j X_{ij} + \epsilon_{ij}$$
+Our model will look like this $$Y_{ij}=\beta_0+\sum_{i=1}^{48} \beta_j X_{ij} + \epsilon_{ij}$$
 
 To interpret a few of the predictors, we have the beta value associated with `ADM_RATE_ALL` is `2.903e+03`, which means that if the normalized admission rate of the school you went to increases by 1, holding all else equal, then the median earnings of a student from that schools median income increases by `2.903e+03`. Note it is more applicable to say if the school acceptance rate of the school you attended increases by 1 percent (.01), then the predicted income of a graduate is `2.903`.
 
@@ -129,6 +128,12 @@ We did a similar thing for `UGDS_WHITE`, which is the proportion of students tha
 We also looked at a few interaction terms. The `PCIP51` and `PCIP52` terms are "Percentage of degrees awarded in Health Professions And Related Programs" and "Percentage of degrees awarded in Business, Management, Marketing, And Related Support Services." Our "full" model had 4 of these terms, out of the 52 our dataset had. The two we chose had the most statistical significance, but we suspected that they interacted since other degrees exist, and degree type likely impacts earnings, so we are measuring other degrees.
 
 Another group of interaction terms we got was `AVGFACSAL`, `DEBT_ALL_STGP_ANY_MEAN`, and `DEBT_MDN`, which are average faculty salary, Average Stafford and Grad PLUS loan debt disbursed at all institutions, and The median original amount of the loan principal upon entering repayment. All of these terms were statistically significant, and we were curious if they interacted, and if so how much they interacted, since staff salary may correlate with increased costs and higher debt. We were also curious how mean debt interacted with median debt, since mean is more impacted by heavy tails and we wanted some way to measure distribution of student debt.
+
+This gives us the following models:
+
+$$ \begin{aligned} \hat{Y} ={}& 4.940 \times 10^3 - 6.271 \times 10^3 X_1 + 4.897 \times 10^3 X_2 \\ &- 1.674 \times 10^5 X_3 - 7.406 \times 10^4 X_4 \\ &+ 1.910 \times 10^4 X_5 + 1.449 \times 10^4 X_6 \\ &- 2.592 \times 10^5 X_7 - 1.404 \times 10^5 X_8 \\ &+ 1.240 \times 10^{-1} X_9 + 1.603 X_{10} \\ &- 4.528 \times 10^{-1} X_{11} + 5.050 \times 10^{-2} X_{12} \\ &+ 2.316 \times 10^4 X_{13} + 4.876 \times 10^4 X_{14} \\ &+ 2.988 \times 10^4 X_{15} + 2.031 \times 10^4 X_{16} \\ &+ 2.130 \times 10^3 X_{17} - 6.292 \times 10^1 X_{18} \\ &+ 9.834 \times 10^1 X_{19} \\ &+ 4.034 \times 10^4 X_5 X_6 \\ &- 9.998 \times 10^{-5} X_{10} X_{11} \\ &- 8.150 \times 10^{-5} X_{10} X_{12} \\ &+ 2.350 \times 10^{-5} X_{11} X_{12} \\ &+ 6.686 \times 10^6 X_{14} X_{15} \\ &+ 1.510 \times 10^{-1} X_{18} X_{19} \end{aligned} $$
+
+#### 
 
 #### Interpretation
 
