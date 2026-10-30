@@ -413,6 +413,25 @@ Candidate models are compared with a stated criterion (adjusted $R^2$, AIC, BIC,
 
 ### Model Selection
 
+The two benchmarks we will use to measure how well our models perform are `R^2` and `AIC`. 
+
+#### R squared
+
+```{r}
+summary(model_1)$r.sq
+summary(model_2)$r.sq
+summary(model_3)$r.sq
+```
+### AIC
+
+```{r}
+extractAIC(model_1)[2]
+extractAIC(model_2)[2]
+extractAIC(model_3)[2]
+```
+
+After looking at these measures
+
 ## 5. Integration and reproducibility (10 pts) - COMPLETE
 
 The report builds on Milestone 2 and responds to its feedback. The submission is a rendered PDF named Group_XX_Milestone3.pdf, with code visible, a seed set, and sessionInfo() present.
