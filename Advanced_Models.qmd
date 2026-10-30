@@ -205,25 +205,53 @@ At least one interaction or polynomial term is considered, with a reason for it.
 
 ### Model 1
 
+There are no interaction terms with this model.
+
 ### Model 2
 
-#### C150 Variable
+To test if the polynomial and interaction terms are significant, we will train reduced models that have everything except the polynomial or interaction term. Then we will use the `anova` function to compute a partial F test. After doing that, we see that each term is significant. 
+
+#### C150_WHITE Variable
 
 ```{r}
-model_2_C150_full <- lm(EARN_MDN_4YR ~ poly(C150_4_WHITE,2), data=new_ed_data)
-model_2_C150_partial <- lm(EARN_MDN_4YR ~ C150_4_WHITE, data=new_ed_data)
-partial_f_C150 <- anova(model_2_C150_full, model_2_C150_partial)
-print(partial_f_C150)
+model_2_reduced <- lm(EARN_MDN_4YR~MAIN.x  + ADM_RATE_ALL+(C150_4_WHITE) + (PCIP51 + PCIP52)^2 + poly(UGDS_WHITE,2) + INEXPFTE + (AVGFACSAL + DEBT_ALL_STGP_ANY_MEAN + DEBT_MDN)^2 + COMP_ORIG_YR8_RT+ (DEATH_YR8_RT+PELL_COMP_4YR_TRANS_YR8_RT) + NOPELL_WDRAW_ORIG_YR8_RT+ DISTANCE + (SATVRMID + SATMTMID)^2 ,data=centered_ed_data)
+print(anova(model_2_reduced, model_2))
 ```
 
-#### C150 Variable
+
+#### UGDS_WHITE Variable
 
 ```{r}
-model_2_C150_full <- lm(EARN_MDN_4YR ~ poly(C150_4_WHITE,2), data=new_ed_data)
-model_2_C150_partial <- lm(EARN_MDN_4YR ~ C150_4_WHITE, data=new_ed_data)
-partial_f_C150 <- anova(model_2_C150_full, model_2_C150_partial)
-print(partial_f_C150)
+model_2_reduced <- lm(EARN_MDN_4YR~MAIN.x  + ADM_RATE_ALL+poly(C150_4_WHITE,2) + (PCIP51 + PCIP52)^2 + UGDS_WHITE + INEXPFTE + (AVGFACSAL + DEBT_ALL_STGP_ANY_MEAN + DEBT_MDN)^2 + COMP_ORIG_YR8_RT+ (DEATH_YR8_RT+PELL_COMP_4YR_TRANS_YR8_RT)^2 + NOPELL_WDRAW_ORIG_YR8_RT+ DISTANCE + (SATVRMID + SATMTMID)^2 ,data=centered_ed_data)
+print(anova(model_2_reduced, model_2))
 ```
+#### Interaction of PCIP51 + PCIP52
+
+```{r}
+model_2_reduced <- lm(EARN_MDN_4YR~MAIN.x  + ADM_RATE_ALL+poly(C150_4_WHITE,2) + (PCIP51 + PCIP52) + poly(UGDS_WHITE,2) + INEXPFTE + (AVGFACSAL + DEBT_ALL_STGP_ANY_MEAN + DEBT_MDN)^2 + COMP_ORIG_YR8_RT+ (DEATH_YR8_RT+PELL_COMP_4YR_TRANS_YR8_RT)^2 + NOPELL_WDRAW_ORIG_YR8_RT+ DISTANCE + (SATVRMID + SATMTMID)^2 ,data=centered_ed_data)
+print(anova(model_2_reduced, model_2))
+```
+#### Interaction of AVGFACSAL + DEBT_ALL_STGP_ANY_MEAN + DEBT_MDN
+
+```{r}
+model_2_reduced <- lm(EARN_MDN_4YR~MAIN.x  + ADM_RATE_ALL+poly(C150_4_WHITE,2) + (PCIP51 + PCIP52)^2 + poly(UGDS_WHITE,2) + INEXPFTE + (AVGFACSAL + DEBT_ALL_STGP_ANY_MEAN + DEBT_MDN) + COMP_ORIG_YR8_RT+ (DEATH_YR8_RT+PELL_COMP_4YR_TRANS_YR8_RT)^2 + NOPELL_WDRAW_ORIG_YR8_RT+ DISTANCE + (SATVRMID + SATMTMID)^2 ,data=centered_ed_data)
+print(anova(model_2_reduced, model_2))
+```
+
+#### Interaction of DEATH_YR8_RT + PELL_COMP_4YR_TRANS_YR8_RT
+
+```{r}
+model_2_reduced <- lm(EARN_MDN_4YR~MAIN.x  + ADM_RATE_ALL+poly(C150_4_WHITE,2) + (PCIP51 + PCIP52)^2 + poly(UGDS_WHITE,2) + INEXPFTE + (AVGFACSAL + DEBT_ALL_STGP_ANY_MEAN + DEBT_MDN)^2 + COMP_ORIG_YR8_RT+ (DEATH_YR8_RT+PELL_COMP_4YR_TRANS_YR8_RT) + NOPELL_WDRAW_ORIG_YR8_RT+ DISTANCE + (SATVRMID + SATMTMID)^2 ,data=centered_ed_data)
+print(anova(model_2_reduced, model_2))
+```
+
+#### Interaction of  SATVRMID + SATMTMID
+
+```{r}
+model_2_reduced <- lm(EARN_MDN_4YR~MAIN.x  + ADM_RATE_ALL+poly(C150_4_WHITE,2) + (PCIP51 + PCIP52)^2 + poly(UGDS_WHITE,2) + INEXPFTE + (AVGFACSAL + DEBT_ALL_STGP_ANY_MEAN + DEBT_MDN)^2 + COMP_ORIG_YR8_RT+ (DEATH_YR8_RT+PELL_COMP_4YR_TRANS_YR8_RT)^2 + NOPELL_WDRAW_ORIG_YR8_RT+ DISTANCE + (SATVRMID + SATMTMID) ,data=centered_ed_data)
+print(anova(model_2_reduced, model_2))
+```
+
 
 
 ### Model 3
