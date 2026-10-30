@@ -1,9 +1,19 @@
 ---
-title: "Advanced Models"
+title: "Advanced Models (Project Milestone 3, Group 001)"
 format: pdf
-authors : "TBD"
+authors : "Ayden Kelleher, Daniel Havens, and Douglas Roth"
 editor: visual
 ---
+
+## Code and Data Access for the Instructor/Grader
+
+Code and data for this project may be found on the project's GitHub page:
+
+<https://github.com/taydenkelleher/Stats-540-Regression-Project-Final-Data-Included>
+
+This .qmd file in particular is labeled as Advanced_Models.qmd, with the revised version matching the established naming standards being turned in on Canvas, as per project requirements.
+
+The data for this project is found in the same GitHub repository under the file name final_data.csv.
 
 ## Load packages
 
@@ -213,7 +223,7 @@ There are no interaction terms with this model.
 
 To test if the polynomial and interaction terms are significant, we will train reduced models that have everything except the polynomial or interaction term. Then we will use the `anova` function to compute a partial F test. After doing that, we see that each term is significant.
 
-#### C150_WHITE Variable
+#### C150_WHITE, Degree 2 Polynomial Term
 
 ```{r}
 model_2_reduced <- lm(EARN_MDN_4YR~MAIN.x  + ADM_RATE_ALL+(C150_4_WHITE) + (PCIP51 + PCIP52)^2 + poly(UGDS_WHITE,2) + INEXPFTE + (AVGFACSAL + DEBT_ALL_STGP_ANY_MEAN + DEBT_MDN)^2 + COMP_ORIG_YR8_RT+ (DEATH_YR8_RT+PELL_COMP_4YR_TRANS_YR8_RT) + NOPELL_WDRAW_ORIG_YR8_RT+ DISTANCE + (SATVRMID + SATMTMID)^2 ,data=centered_ed_data)
@@ -221,7 +231,7 @@ print(anova(model_2_reduced, model_2))
 rm(model_2_reduced)
 ```
 
-#### UGDS_WHITE Variable
+#### UGDS_WHITE Variable, Degree 2 Polynomial Term
 
 ```{r}
 model_2_reduced <- lm(EARN_MDN_4YR~MAIN.x  + ADM_RATE_ALL+poly(C150_4_WHITE,2) + (PCIP51 + PCIP52)^2 + UGDS_WHITE + INEXPFTE + (AVGFACSAL + DEBT_ALL_STGP_ANY_MEAN + DEBT_MDN)^2 + COMP_ORIG_YR8_RT+ (DEATH_YR8_RT+PELL_COMP_4YR_TRANS_YR8_RT)^2 + NOPELL_WDRAW_ORIG_YR8_RT+ DISTANCE + (SATVRMID + SATMTMID)^2 ,data=centered_ed_data)
@@ -229,7 +239,7 @@ print(anova(model_2_reduced, model_2))
 rm(model_2_reduced)
 ```
 
-#### Interaction of PCIP51 + PCIP52
+#### Interaction of PCIP51 and PCIP52
 
 ```{r}
 model_2_reduced <- lm(EARN_MDN_4YR~MAIN.x  + ADM_RATE_ALL+poly(C150_4_WHITE,2) + (PCIP51 + PCIP52) + poly(UGDS_WHITE,2) + INEXPFTE + (AVGFACSAL + DEBT_ALL_STGP_ANY_MEAN + DEBT_MDN)^2 + COMP_ORIG_YR8_RT+ (DEATH_YR8_RT+PELL_COMP_4YR_TRANS_YR8_RT)^2 + NOPELL_WDRAW_ORIG_YR8_RT+ DISTANCE + (SATVRMID + SATMTMID)^2 ,data=centered_ed_data)
@@ -237,7 +247,7 @@ print(anova(model_2_reduced, model_2))
 rm(model_2_reduced)
 ```
 
-#### Interaction of AVGFACSAL + DEBT_ALL_STGP_ANY_MEAN + DEBT_MDN
+#### Interaction of AVGFACSAL, DEBT_ALL_STGP_ANY_MEAN, and DEBT_MDN
 
 ```{r}
 model_2_reduced <- lm(EARN_MDN_4YR~MAIN.x  + ADM_RATE_ALL+poly(C150_4_WHITE,2) + (PCIP51 + PCIP52)^2 + poly(UGDS_WHITE,2) + INEXPFTE + (AVGFACSAL + DEBT_ALL_STGP_ANY_MEAN + DEBT_MDN) + COMP_ORIG_YR8_RT+ (DEATH_YR8_RT+PELL_COMP_4YR_TRANS_YR8_RT)^2 + NOPELL_WDRAW_ORIG_YR8_RT+ DISTANCE + (SATVRMID + SATMTMID)^2 ,data=centered_ed_data)
@@ -245,7 +255,7 @@ print(anova(model_2_reduced, model_2))
 rm(model_2_reduced)
 ```
 
-#### Interaction of DEATH_YR8_RT + PELL_COMP_4YR_TRANS_YR8_RT
+#### Interaction of DEATH_YR8_RT and PELL_COMP_4YR_TRANS_YR8_RT
 
 ```{r}
 model_2_reduced <- lm(EARN_MDN_4YR~MAIN.x  + ADM_RATE_ALL+poly(C150_4_WHITE,2) + (PCIP51 + PCIP52)^2 + poly(UGDS_WHITE,2) + INEXPFTE + (AVGFACSAL + DEBT_ALL_STGP_ANY_MEAN + DEBT_MDN)^2 + COMP_ORIG_YR8_RT+ (DEATH_YR8_RT+PELL_COMP_4YR_TRANS_YR8_RT) + NOPELL_WDRAW_ORIG_YR8_RT+ DISTANCE + (SATVRMID + SATMTMID)^2 ,data=centered_ed_data)
@@ -253,7 +263,7 @@ print(anova(model_2_reduced, model_2))
 rm(model_2_reduced)
 ```
 
-#### Interaction of SATVRMID + SATMTMID
+#### Interaction of SATVRMID and SATMTMID
 
 ```{r}
 model_2_reduced <- lm(EARN_MDN_4YR~MAIN.x  + ADM_RATE_ALL+poly(C150_4_WHITE,2) + (PCIP51 + PCIP52)^2 + poly(UGDS_WHITE,2) + INEXPFTE + (AVGFACSAL + DEBT_ALL_STGP_ANY_MEAN + DEBT_MDN)^2 + COMP_ORIG_YR8_RT+ (DEATH_YR8_RT+PELL_COMP_4YR_TRANS_YR8_RT)^2 + NOPELL_WDRAW_ORIG_YR8_RT+ DISTANCE + (SATVRMID + SATMTMID) ,data=centered_ed_data)
@@ -318,7 +328,7 @@ Residual plots and checks for the model’s assumptions are shown. Outliers, inf
 
 #### Testing for Homoscedasticity
 
-One of the assumptions for linear regression is that we have equal variance from the model. This means if we were to plot fitted values versus residuals, we should get equal spread from zero. However, after plotting that, we can see that as our predicted value gets larger, so does the variance. Thus we have evidence against our assumption of equal variance. We can confirm this by running Brown Forsythe test, which gives us a p-value of `2.2e-16`, which suggests it is unlikely our data has equal variance. This suggests a transformation of our outcome variable may be useful. 
+One of the assumptions for linear regression is that we have equal variance from the model. This means if we were to plot fitted values versus residuals, we should get equal spread from zero. However, after plotting that, we can see that as our predicted value gets larger, so does the variance. Thus we have evidence against our assumption of equal variance. We can confirm this by running Brown Forsythe test, which gives us a p-value of `2.2e-16`, which suggests it is unlikely our data has equal variance. This suggests a transformation of our outcome variable may be useful.
 
 ```{r}
 plot(fitted.values(model_1), residuals(model_1))
@@ -327,25 +337,24 @@ leveneTest(residuals(model_1) ~ (fitted.values(model_1) > median(fitted.values(m
 
 #### Uncorrelated Observations
 
-To test if our observations are independent, we will plot residuals versus index. After doing that, we have equal spread. All of our data comes from the same year, and we don't have observations of the same thing over a few years, so we shouldn't have to worry about autocorrelation. 
+To test if our observations are independent, we will plot residuals versus index. After doing that, we have equal spread. All of our data comes from the same year, and we don't have observations of the same thing over a few years, so we shouldn't have to worry about autocorrelation.
 
 ```{r}
 plot(residuals(model_1))
 ```
 
-
 #### Normality
 
-To test normality, we will begin by plotting the qqplot. If our data is normally distributed, then our data should fit the qqline very well. However, we can see out data does not, and with the size of our dataset, it is extremely unlikely our residuals are normally distributed. 
+To test normality, we will begin by plotting the qqplot. If our data is normally distributed, then our data should fit the qqline very well. However, we can see out data does not, and with the size of our dataset, it is extremely unlikely our residuals are normally distributed.
 
 ```{r}
 qqnorm(summary(model_1)$residuals)
 qqline(summary(model_1)$residuals)
 ```
 
-#### Multi Collinearity
+#### Multicollinearity
 
-The last thing we want to look for is collinearity. When predictors are correlated alot, variance increases. We can measure this by using variance inflation factor.  
+The last thing we want to look for is collinearity. When predictors are correlated alot, variance increases. We can measure this by using variance inflation factor.
 
 ```{r}
 print(vif(model_1))
@@ -387,7 +396,6 @@ print(vif(model_2))
 ### Model 3
 
 ```{r}
-#e_plot_lm_diagnostics(model_3, sw_plot_set = "full")
 
 plot(fitted.values(model_3), residuals(model_3), main = "Residuals vs Fitted", xlab = "Fitted", ylab = "Residuals")
 
@@ -403,12 +411,25 @@ legend("topright", legend = c("Residual Density", "Normal Curve"),
 plot(model_3, which = 4)
 plot(model_3, which = 5)
 
+```
+
+#### Multicollinearity
+
+```{r}
 vif(model_3)
 ```
 
 We know that by selection of our variables, none of our predictors are perfectly multicollinear, as we removed all of the perfectly or (nearly perfectly) multicollinear predictors in a prior part of the project. However, there are several variables which do have inflated VIF measurements, and thus are under suspicion for multicollinearity. Specifically, our in-state tuition, the type of school (public, private nonprofit, or private for-profit), the interaction terms between those two, and the interaction term between school type and admission rate. To some degree, inflated VIF for interaction terms is expected, however, these values are extrememly high. Between these measurements and the associated $p$-values in the model fit, we have reason to remove some, if not most, of these in a revised model. However, as the purpose of this comparison is to see what makes a good model, we continue examining this model rather than a reduced model.
 
-Given our fitted vs residuals plot, we know that our data is not particularly heteroskedastic. As such, we conclude that our data here is homoscedastic.
+#### Testing for Homoscedasticity
+
+```{r}
+leveneTest(residuals(model_3) ~ (fitted.values(model_3) > median(fitted.values(model_3))))
+```
+
+Given our fitted vs residuals plot, we see some indications of heteroskedasticity, in particular, the tendency for residuals to have a slightly more positive value on average, with those having negative values being less dense. Additionally, performing the Brown-Forsythe test gives us a $p$-value of $7.603 \cdot 10^{-7}$, so Brown-Forsythe concludes that it is unlikely our data has equal variance.
+
+#### Residuals
 
 Our residuals roughly follow a normal distribution, as established both by our residuals density plot, and our QQ-plot. Our QQ-plot does have some poorly behaved data points at the lower end, however, given the nature of QQ-plots, this is not particularly of concern. As further note for normality of residuals, we did perform a box-cox transform on this model, so the data should be especially well behaved.
 
