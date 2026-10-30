@@ -207,6 +207,25 @@ At least one interaction or polynomial term is considered, with a reason for it.
 
 ### Model 2
 
+#### C150 Variable
+
+```{r}
+model_2_C150_full <- lm(EARN_MDN_4YR ~ poly(C150_4_WHITE,2), data=new_ed_data)
+model_2_C150_partial <- lm(EARN_MDN_4YR ~ C150_4_WHITE, data=new_ed_data)
+partial_f_C150 <- anova(model_2_C150_full, model_2_C150_partial)
+print(partial_f_C150)
+```
+
+#### C150 Variable
+
+```{r}
+model_2_C150_full <- lm(EARN_MDN_4YR ~ poly(C150_4_WHITE,2), data=new_ed_data)
+model_2_C150_partial <- lm(EARN_MDN_4YR ~ C150_4_WHITE, data=new_ed_data)
+partial_f_C150 <- anova(model_2_C150_full, model_2_C150_partial)
+print(partial_f_C150)
+```
+
+
 ### Model 3
 
 Here, we include degree two interaction terms between in-state tuition, institution type, and admission rate. This is because the effect of in-state tuition can be mitigated by private institutions waiving tuition, in-state tuition can often be waived by higher admittance requirements (reflected by admission rate), and institution type and admission rate together can tell us how selective the institution is, often indicating how well perceived the institution is in the job market.
@@ -222,6 +241,8 @@ Residual plots and checks for the model’s assumptions are shown. Outliers, inf
 ### Model 1
 
 ### Model 2
+
+
 
 ### Model 3
 
