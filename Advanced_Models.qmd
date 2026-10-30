@@ -269,20 +269,40 @@ Residual plots and checks for the model’s assumptions are shown. Outliers, inf
 
 ### Model 1
 
+#### Testing for Homoscedasticity
+
+One of the assumptions for linear regression is that we have equal variance from the model. This means if we were to plot fitted values versus residuals, we should get equal spread from zero. However, after plotting that, we can see that as our predicted value gets larger, so does the variance. Thus we have evidence against our assumption of equal variance. We can confirm this by running Brown Forsythe test, which gives us a p-value of `2.2e-16`, which suggests it is unlikely our data has equal variance. This suggests a transformation of our outcome variable may be useful. 
+
 ```{r}
 plot(fitted.values(model_1), residuals(model_1))
+leveneTest(residuals(model_1) ~ (fitted.values(model_1) > median(fitted.values(model_1))))
 ```
+
+#### Uncorrelated Observations
+
+To test if our observations are independent, we will plot residuals versus index. After doing that, we have equal spread. All of our data comes from the same year, and we don't have observations of the same thing over a few years, so we shouldn't have to worry about autocorrelation. 
+
+```{r}
+plot(residuals(model_1))
+```
+
+
+#### Normality
+
+To test normality, we will begin by plotting the qqplot. If our data is normally distributed, then our data should fit the qqline very well. However, we can see out data does not, and with the size of our dataset, it is extremely unlikely our residuals are normally distributed. 
 
 ```{r}
 qqnorm(summary(model_1)$residuals)
+qqline(summary(model_1)$residuals)
 ```
+
+#### Multi Collinearity
+
+The last thing we want to look for is collinearity. When predictors are correlated alot, variance increases. We can measure this by using variance inflation factor.  
 
 ```{r}
 print(vif(model_1))
 ```
-
-
-
 
 ### Model 2
 
