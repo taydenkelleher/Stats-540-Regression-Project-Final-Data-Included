@@ -80,65 +80,57 @@ normalized_ed_data <- new_ed_data %>%
 rm(numeric_cols) #bruh why
 ```
 
-
 ## 1. Multiple regression models (10 pts)
 
 At least two candidate models with several predictors are fit. Coefficients are interpreted correctly, holding the other predictors fixed. Categorical predictors are coded and interpreted correctly.
 
 ### Model 1
 
-Our first model is going to be the full model using the raw data for increased interpretability, minus four predictors, `CITY`, which we mostly just kept because it could be fun to look at the projected earnings later, and  `CREDDESC`, which is entirely zeros, meaning we cannot use it. The last predictor we removed was `OPEID6`, which is the unique identifier for each college, which we wanted to remove so if colleges change over time, our models adjust more, rather than hardcoding the mean for each college. The last predictor we removed was `CONTROL.x`, which is exactly the same as `CONTROL.y` but coded as integers rather than the categorical variable. The last variable we got rid of was `TUITFTE` since it was causing infinite `vif`, due to it being identical to other `TUITFTE.x`. We still have 48 other predictors, so we are not lacking predictors.
+Our first model is going to be the full model using the raw data for increased interpretability, minus four predictors, `CITY`, which we mostly just kept because it could be fun to look at the projected earnings later, and `CREDDESC`, which is entirely zeros, meaning we cannot use it. The last predictor we removed was `OPEID6`, which is the unique identifier for each college, which we wanted to remove so if colleges change over time, our models adjust more, rather than hardcoding the mean for each college. The last predictor we removed was `CONTROL.x`, which is exactly the same as `CONTROL.y` but coded as integers rather than the categorical variable. The last variable we got rid of was `TUITFTE` since it was causing infinite `vif`, due to it being identical to other `TUITFTE.x`. We still have 48 other predictors, so we are not lacking predictors.
 
-To interpret a few of the predictors, we have the beta value associated with `ADM_RATE_ALL` is `2.903e+03`, which means that if the normalized admission rate of the school you went to increases by 1, holding all else equal, then the median earnings of a student from that schools median income increases by `2.903e+03`. Note it is more applicable to say if the school acceptance rate of the school you attended increases by 1 percent (.01), then the predicted income of a graduate is `2.903`. 
+To interpret a few of the predictors, we have the beta value associated with `ADM_RATE_ALL` is `2.903e+03`, which means that if the normalized admission rate of the school you went to increases by 1, holding all else equal, then the median earnings of a student from that schools median income increases by `2.903e+03`. Note it is more applicable to say if the school acceptance rate of the school you attended increases by 1 percent (.01), then the predicted income of a graduate is `2.903`.
 
 Another predictor to interpret is the beta value associated with `DEBT_MDN`, or the median original amount of the loan principal upon entering repayment of the school, which is `-1.460e-01`. Thus we have for every additional dollar of debt the median of your school, then the median earnings of the median earnings of graduates working and not enrolled 4 year after completing decreases by `.146`.
 
-The last predictor we will interpret is the beta value associated with `CONTROL.y`, which is Control of institution, either public, private nonprofit, or private for profit. Since this is a categorical variable, it gets dummy coded. A beta value associated with `CONTROL.yPrivate, nonprofit` of `1.111e+03  5.100e+03` tells us that the median earnings of a graduates 4 years after graduating a private, nonprofit university is `1.111e+03` more than median earnings of graduates 4 years after graduating a Private for profit school. And a beta value associated with `CONTROL.yPublic` of `1.082e+03` tells us  the median earnings of a graduates 4 years after graduating a public university is `1.082e+03` more than median earnings of graduates 4 years after graduating a Private for profit school.
-
-
+The last predictor we will interpret is the beta value associated with `CONTROL.y`, which is Control of institution, either public, private nonprofit, or private for profit. Since this is a categorical variable, it gets dummy coded. A beta value associated with `CONTROL.yPrivate, nonprofit` of `1.111e+03  5.100e+03` tells us that the median earnings of a graduates 4 years after graduating a private, nonprofit university is `1.111e+03` more than median earnings of graduates 4 years after graduating a Private for profit school. And a beta value associated with `CONTROL.yPublic` of `1.082e+03` tells us the median earnings of a graduates 4 years after graduating a public university is `1.082e+03` more than median earnings of graduates 4 years after graduating a Private for profit school.
 
 ```{r}
 model_1 <- lm(EARN_MDN_4YR ~ .-CITY-CREDDESC-OPEID6-CONTROL.x-TUITFTE, data = new_ed_data)
 summary(model_1)
 ```
 
-
 ### Model 2
 
-Our next model is a more refined model, only using the statistically significant terms, along with statistically significant interaction terms. 
+Our next model is a more refined model, only using the statistically significant terms, along with statistically significant interaction terms.
 
 #### Polynomial Terms
 
-The way we chose these terms is we would fit models and try different interaction and polynomial terms, and if there statistically significant predictors, we would keep them, and if not, we would remove them and try something else. For terms with very small p-values, which tell us given $\beta=0$, what is the probability that our data is at least this spread out, is very small, meaning the null model is likely wrong and there is some relationship, we chose to fit some polynomial terms, including `C150_4_WHITE` and `UGDS_WHITE`, both degree 2 to help with interpretability and because higher order polynomial terms were not as statistically significant. 
+The way we chose these terms is we would fit models and try different interaction and polynomial terms, and if there statistically significant predictors, we would keep them, and if not, we would remove them and try something else. For terms with very small p-values, which tell us given $\beta=0$, what is the probability that our data is at least this spread out, is very small, meaning the null model is likely wrong and there is some relationship, we chose to fit some polynomial terms, including `C150_4_WHITE` and `UGDS_WHITE`, both degree 2 to help with interpretability and because higher order polynomial terms were not as statistically significant.
 
-`C150_4_WHITE` is Completion rate for first-time, full-time students at four-year institutions (150% of expected time to completion) for white students. Completing college is likely a good predictor of earnings after college, so it makes sense this term is statistically significant, and it could be nonlinear. We had 4 versions of the `C150_4` terms, and chose the completion rate for white students because it had the smallest p value in the full model. 
+`C150_4_WHITE` is Completion rate for first-time, full-time students at four-year institutions (150% of expected time to completion) for white students. Completing college is likely a good predictor of earnings after college, so it makes sense this term is statistically significant, and it could be nonlinear. We had 4 versions of the `C150_4` terms, and chose the completion rate for white students because it had the smallest p value in the full model.
 
-We did a similar thing for `UGDS_WHITE`, which is the proportion of students that are white. We suspected that the data was nonlinear, and wanted to investigate it as a polynomial. 
+We did a similar thing for `UGDS_WHITE`, which is the proportion of students that are white. We suspected that the data was nonlinear, and wanted to investigate it as a polynomial.
 
 #### Interaction Terms
 
-We also looked at a few interaction terms. The `PCIP51` and `PCIP52` terms are "Percentage of degrees awarded in Health Professions And Related Programs" and 
-"Percentage of degrees awarded in Business, Management, Marketing, And Related Support Services." Our "full" model had 4 of these terms, out of the 52 our dataset had. The two we chose had the most statistical significance, but we suspected that they interacted since other degrees exist, and degree type likely impacts earnings, so we are measuring other degrees. 
+We also looked at a few interaction terms. The `PCIP51` and `PCIP52` terms are "Percentage of degrees awarded in Health Professions And Related Programs" and "Percentage of degrees awarded in Business, Management, Marketing, And Related Support Services." Our "full" model had 4 of these terms, out of the 52 our dataset had. The two we chose had the most statistical significance, but we suspected that they interacted since other degrees exist, and degree type likely impacts earnings, so we are measuring other degrees.
 
-Another group of interaction terms we got was `AVGFACSAL`, `DEBT_ALL_STGP_ANY_MEAN`, and `DEBT_MDN`, which are average faculty salary, Average Stafford and Grad PLUS loan debt disbursed at all institutions, and The median original amount of the loan principal upon entering repayment. All of these terms were statistically significant, and we were curious if they interacted, and if so how much they interacted, since staff salary may correlate with increased costs and higher debt. We were also curious how mean debt interacted with median debt, since mean is more impacted by heavy tails and we wanted some way to measure distribution of student debt. 
+Another group of interaction terms we got was `AVGFACSAL`, `DEBT_ALL_STGP_ANY_MEAN`, and `DEBT_MDN`, which are average faculty salary, Average Stafford and Grad PLUS loan debt disbursed at all institutions, and The median original amount of the loan principal upon entering repayment. All of these terms were statistically significant, and we were curious if they interacted, and if so how much they interacted, since staff salary may correlate with increased costs and higher debt. We were also curious how mean debt interacted with median debt, since mean is more impacted by heavy tails and we wanted some way to measure distribution of student debt.
 
 #### Interpretation
 
-To interpret what a few of these values mean, we have the beta value associate with `ADM_RATE_ALL` is `4.897e+03`. Since this is not a part of any interaction terms or polynomial terms, we know that if the admission rate of the college increased by 1 percent, then the predicted Median earnings of graduates working and not enrolled 4 year after completing would increase `48.97`. 
+To interpret what a few of these values mean, we have the beta value associate with `ADM_RATE_ALL` is `4.897e+03`. Since this is not a part of any interaction terms or polynomial terms, we know that if the admission rate of the college increased by 1 percent, then the predicted Median earnings of graduates working and not enrolled 4 year after completing would increase `48.97`.
 
-The beta value associated with `DEBT_MDN` is `-1.891e-01`, which means that the linear component of the `DEBT_MDN` is `-1.891e-01`. 
+The beta value associated with `DEBT_MDN` is `-1.891e-01`, which means that the linear component of the `DEBT_MDN` is `-1.891e-01`.
 
-The beta value assoicated with `AVGFACSAL:DEBT_MDN`, the interaction between these two predictors is `-8.150e-05` which means 
+The beta value associated with `AVGFACSAL:DEBT_MDN`, the interaction between these two predictors is `-8.150e-05` which means
 
-AVGFACSAL:DEBT_MDN                      -8.150e-05  1.549e-05  -5.262
-DEBT_ALL_STGP_ANY_MEAN:DEBT_MDN          2.350e-05  3.510e-06   6.694
-
+AVGFACSAL:DEBT_MDN -8.150e-05 1.549e-05 -5.262 DEBT_ALL_STGP_ANY_MEAN:DEBT_MDN 2.350e-05 3.510e-06 6.694
 
 ```{r}
 model_2 <- lm(EARN_MDN_4YR~MAIN.x  + ADM_RATE_ALL+poly(C150_4_WHITE,2) + (PCIP51 + PCIP52)^2 + poly(UGDS_WHITE,2) + INEXPFTE + (AVGFACSAL + DEBT_ALL_STGP_ANY_MEAN + DEBT_MDN)^2 + COMP_ORIG_YR8_RT+ (DEATH_YR8_RT+PELL_COMP_4YR_TRANS_YR8_RT)^2 + NOPELL_WDRAW_ORIG_YR8_RT+ DISTANCE + (SATVRMID + SATMTMID)^2 ,data=centered_ed_data)
 summary(model_2)
 ```
-
 
 ### Model 3
 
@@ -176,9 +168,9 @@ summary(model_3)
 
 For our third, model, we took a more hand-built approach. We included in-state tuition fee, institution type (public, private non-profit, or private for-profit), and admission rate, as well as all degree two interaction terms between these; predicted degree accomplishment, highest degree achieved, completion rate, median debt, and the interaction term between completion rate and institution admission rate.
 
-Preemptively, we examine the Box-Cox plot, and find that a transform of the data is needed. This is backed up by (TODO) the QQ-plot not being very linear, and the histogram of residuals not following a normal distribution. After this transform, we center our data to eliminate non-essential contributions of interaction and polynomial terms with the base variables.
+Preemptively, we examine the Box-Cox plot, and find that a transform of the data is needed. This is backed up by the QQ-plot not being very linear, and the histogram of residuals not following a normal distribution, although we do not include those here as they do not directly relate to the final model. After this transform, we center our data to eliminate non-essential contributions of interaction and polynomial terms with the base variables. Here, we do not pick a convenient value inside our confidence interval, as our confidence interval is so narrow that there are no particularly nice values inside of it.
 
-After this transform, we label our variables as follows: $Y$ as our transformed and centered version of four-year median earnings, $X_1$ as our centered in-state tuition, $X_2$ as our indicator for being a private nonprofit institution, $X_3$ as our indicator for being a private for-profit institution, $X_4$ as our centered admission rate as a decimal, $X_5$ as our indicator for predicted degree, $X_6$ and $X_7$ as our indicators for the various options of highest degree offered (master's and doctoral), $X_8$ as our centered graduation rate (TODO, check this), and $X_9$ as our centered median debt. This gives us the following model:
+After this transform, we label our variables as follows: $Y$ as our transformed and centered version of four-year median earnings, $X_1$ as our centered in-state tuition, $X_2$ as our indicator for being a private nonprofit institution, $X_3$ as our indicator for being a private for-profit institution, $X_4$ as our centered admission rate as a decimal, $X_5$ as our indicator for predicted degree, $X_6$ and $X_7$ as our indicators for the various options of highest degree offered (master's and doctoral), $X_8$ as our centered graduation rate, and $X_9$ as our centered median debt. This gives us the following model:
 
 $$ Y = 10^{-3} ( -7.157+ 2.425 \cdot 10^{-4} X_1 -4.087 X_2 + 0.7901 X_3 - 4.019 X_4 + 1.016 X_5 + 7.124 X_6 \\
 + 8.216 X_7 + 3.905 X_8 - 2.851 \cdot 10^{-5} - 1.368 \cdot 10^{-4} X_1 X_2 - 5.906 \cdot 10^{-4} X_1 X_3 \\
@@ -198,7 +190,7 @@ For the coefficient of $X_3$, we find that for private for-profit institutions, 
 
 For the coefficient of $X_4$, we find that for every $1$ your decimal expression of acceptance rate increases from the mean national acceptance rate, the transformed and shifted four-year median income after graduation goes down by $4.019 \cdot 10^{-3}$. For a more readable interpretation, the more selective an institution, the higher the median pay is likely to be four years after graduation. The associated $t$-test tells us that this effect may not actually be present at all, and this coefficient may actually be zero.
 
-TODO: Continue explaining at PREDDEG3
+Similar interpretations are available for the remaining variables. However, following the discussion after class with the instructor, they are omitted here due to our already excessive number of variables, so as to keep this write-up to a readable length.
 
 ## 2. Interactions and polynomial terms (10 pts)
 
@@ -210,33 +202,38 @@ There are no interaction terms with this model.
 
 ### Model 2
 
-To test if the polynomial and interaction terms are significant, we will train reduced models that have everything except the polynomial or interaction term. Then we will use the `anova` function to compute a partial F test. After doing that, we see that each term is significant. 
+To test if the polynomial and interaction terms are significant, we will train reduced models that have everything except the polynomial or interaction term. Then we will use the `anova` function to compute a partial F test. After doing that, we see that each term is significant.
 
 #### C150_WHITE Variable
 
 ```{r}
 model_2_reduced <- lm(EARN_MDN_4YR~MAIN.x  + ADM_RATE_ALL+(C150_4_WHITE) + (PCIP51 + PCIP52)^2 + poly(UGDS_WHITE,2) + INEXPFTE + (AVGFACSAL + DEBT_ALL_STGP_ANY_MEAN + DEBT_MDN)^2 + COMP_ORIG_YR8_RT+ (DEATH_YR8_RT+PELL_COMP_4YR_TRANS_YR8_RT) + NOPELL_WDRAW_ORIG_YR8_RT+ DISTANCE + (SATVRMID + SATMTMID)^2 ,data=centered_ed_data)
 print(anova(model_2_reduced, model_2))
+rm(model_2_reduced)
 ```
-
 
 #### UGDS_WHITE Variable
 
 ```{r}
 model_2_reduced <- lm(EARN_MDN_4YR~MAIN.x  + ADM_RATE_ALL+poly(C150_4_WHITE,2) + (PCIP51 + PCIP52)^2 + UGDS_WHITE + INEXPFTE + (AVGFACSAL + DEBT_ALL_STGP_ANY_MEAN + DEBT_MDN)^2 + COMP_ORIG_YR8_RT+ (DEATH_YR8_RT+PELL_COMP_4YR_TRANS_YR8_RT)^2 + NOPELL_WDRAW_ORIG_YR8_RT+ DISTANCE + (SATVRMID + SATMTMID)^2 ,data=centered_ed_data)
 print(anova(model_2_reduced, model_2))
+rm(model_2_reduced)
 ```
+
 #### Interaction of PCIP51 + PCIP52
 
 ```{r}
 model_2_reduced <- lm(EARN_MDN_4YR~MAIN.x  + ADM_RATE_ALL+poly(C150_4_WHITE,2) + (PCIP51 + PCIP52) + poly(UGDS_WHITE,2) + INEXPFTE + (AVGFACSAL + DEBT_ALL_STGP_ANY_MEAN + DEBT_MDN)^2 + COMP_ORIG_YR8_RT+ (DEATH_YR8_RT+PELL_COMP_4YR_TRANS_YR8_RT)^2 + NOPELL_WDRAW_ORIG_YR8_RT+ DISTANCE + (SATVRMID + SATMTMID)^2 ,data=centered_ed_data)
 print(anova(model_2_reduced, model_2))
+rm(model_2_reduced)
 ```
+
 #### Interaction of AVGFACSAL + DEBT_ALL_STGP_ANY_MEAN + DEBT_MDN
 
 ```{r}
 model_2_reduced <- lm(EARN_MDN_4YR~MAIN.x  + ADM_RATE_ALL+poly(C150_4_WHITE,2) + (PCIP51 + PCIP52)^2 + poly(UGDS_WHITE,2) + INEXPFTE + (AVGFACSAL + DEBT_ALL_STGP_ANY_MEAN + DEBT_MDN) + COMP_ORIG_YR8_RT+ (DEATH_YR8_RT+PELL_COMP_4YR_TRANS_YR8_RT)^2 + NOPELL_WDRAW_ORIG_YR8_RT+ DISTANCE + (SATVRMID + SATMTMID)^2 ,data=centered_ed_data)
 print(anova(model_2_reduced, model_2))
+rm(model_2_reduced)
 ```
 
 #### Interaction of DEATH_YR8_RT + PELL_COMP_4YR_TRANS_YR8_RT
@@ -244,16 +241,16 @@ print(anova(model_2_reduced, model_2))
 ```{r}
 model_2_reduced <- lm(EARN_MDN_4YR~MAIN.x  + ADM_RATE_ALL+poly(C150_4_WHITE,2) + (PCIP51 + PCIP52)^2 + poly(UGDS_WHITE,2) + INEXPFTE + (AVGFACSAL + DEBT_ALL_STGP_ANY_MEAN + DEBT_MDN)^2 + COMP_ORIG_YR8_RT+ (DEATH_YR8_RT+PELL_COMP_4YR_TRANS_YR8_RT) + NOPELL_WDRAW_ORIG_YR8_RT+ DISTANCE + (SATVRMID + SATMTMID)^2 ,data=centered_ed_data)
 print(anova(model_2_reduced, model_2))
+rm(model_2_reduced)
 ```
 
-#### Interaction of  SATVRMID + SATMTMID
+#### Interaction of SATVRMID + SATMTMID
 
 ```{r}
 model_2_reduced <- lm(EARN_MDN_4YR~MAIN.x  + ADM_RATE_ALL+poly(C150_4_WHITE,2) + (PCIP51 + PCIP52)^2 + poly(UGDS_WHITE,2) + INEXPFTE + (AVGFACSAL + DEBT_ALL_STGP_ANY_MEAN + DEBT_MDN)^2 + COMP_ORIG_YR8_RT+ (DEATH_YR8_RT+PELL_COMP_4YR_TRANS_YR8_RT)^2 + NOPELL_WDRAW_ORIG_YR8_RT+ DISTANCE + (SATVRMID + SATMTMID) ,data=centered_ed_data)
 print(anova(model_2_reduced, model_2))
+rm(model_2_reduced)
 ```
-
-
 
 ### Model 3
 
@@ -262,6 +259,47 @@ Here, we include degree two interaction terms between in-state tuition, institut
 There is also room for C150_4 to have interaction terms with practically every other variable present, as drop-out rate is a very useful indicator of median pay after graduation. Given the nature of graduation rate and admittance criteria, they will likely have interaction in that the more strict the admittance criteria, the higher the graduation rate will likely be. As such, we try to account for how this effects pay by including an interaction term.
 
 The remaining items: median debt, predicted degree, and highest degree received, all indicate base-line requirements for most students at these institutions, and help us account for what the average student at these institutions look like.
+
+Similar ANOVA models to those found above are included below.
+
+#### Interaction of TUITIONFEE_IN and CONTROL.x
+
+```{r}
+model_3_reduced <- lm(
+  EARN_MDN_4YR ~ TUITIONFEE_IN + CONTROL.x + ADM_RATE_ALL + 
+  TUITIONFEE_IN:ADM_RATE_ALL + CONTROL.x:ADM_RATE_ALL +
+  PREDDEG + HIGHDEG + C150_4 + C150_4:ADM_RATE_ALL + DEBT_MDN,
+  data = centered_m3_data
+)
+anova(model_3_reduced, model_3)
+rm(model_3_reduced)
+```
+
+#### Interaction of TUITIONFEE_IN and ADM_RATE_ALL
+
+```{r}
+model_3_reduced <- lm(
+  EARN_MDN_4YR ~ TUITIONFEE_IN + CONTROL.x + ADM_RATE_ALL + 
+  TUITIONFEE_IN:CONTROL.x + CONTROL.x:ADM_RATE_ALL +
+  PREDDEG + HIGHDEG + C150_4 + C150_4:ADM_RATE_ALL + DEBT_MDN,
+  data = centered_m3_data
+)
+anova(model_3_reduced, model_3)
+rm(model_3_reduced)
+```
+
+#### Interaction of CONTROL.x and ADM_RATE_ALL
+
+```{r}
+model_3_reduced <- lm(
+  EARN_MDN_4YR ~ TUITIONFEE_IN + CONTROL.x + ADM_RATE_ALL + 
+  TUITIONFEE_IN:CONTROL.x + TUITIONFEE_IN:ADM_RATE_ALL +
+  PREDDEG + HIGHDEG + C150_4 + C150_4:ADM_RATE_ALL + DEBT_MDN,
+  data = centered_m3_data
+)
+anova(model_3_reduced, model_3)
+rm(model_3_reduced)
+```
 
 ## 3. Diagnostics (10 pts)
 
@@ -281,40 +319,58 @@ qqnorm(summary(model_1)$residuals)
 print(vif(model_1))
 ```
 
-
-
-
 ### Model 2
 
 ```{r}
 plot(fitted.values(model_2), residuals(model_2))
 ```
 
-
 ```{r}
 qqnorm(summary(model_2)$residuals)
+qqline(summary(model_2)$residuals, col = "#008080")
 ```
+
 ```{r}
 print(vif(model_2))
 ```
 
-
 ### Model 3
 
 ```{r}
-e_plot_lm_diagnostics(model_3, sw_plot_set = "full")
+#e_plot_lm_diagnostics(model_3, sw_plot_set = "full")
+
+plot(fitted.values(model_3), residuals(model_3), main = "Residuals vs Fitted", xlab = "Fitted", ylab = "Residuals")
+
+qqnorm(summary(model_3)$residuals)
+qqline(summary(model_3)$residuals, col = "red")
+
+plot(density(residuals(model_3)), main = "Density Plot of Residuals", xlab = "Residuals")
+curve(dnorm(x, mean = mean(residuals(model_3)), sd = sd(residuals(model_3))), 
+      col = "red", lty = 2, add = TRUE)
+legend("topright", legend = c("Residual Density", "Normal Curve"), 
+       col = c("black", "red"), lty = c(1, 2))
+
+plot(model_3, which = 4)
+plot(model_3, which = 5)
+
 vif(model_3)
 ```
+
+We know that by selection of our variables, none of our predictors are perfectly multicollinear, as we removed all of the perfectly or (nearly perfectly) multicollinear predictors in a prior part of the project. However, there are several variables which do have inflated VIF measurements, and thus are under suspicion for multicollinearity. Specifically, our in-state tuition, the type of school (public, private nonprofit, or private for-profit), the interaction terms between those two, and the interaction term between school type and admission rate. To some degree, inflated VIF for interaction terms is expected, however, these values are extrememly high. Between these measurements and the associated $p$-values in the model fit, we have reason to remove some, if not most, of these in a revised model. However, as the purpose of this comparison is to see what makes a good model, we continue examining this model rather than a reduced model.
+
+Given our fitted vs residuals plot, we know that our data is not particularly heteroskedastic. As such, we conclude that our data here is homoscedastic.
+
+Our residuals roughly follow a normal distribution, as established both by our residuals density plot, and our QQ-plot. Our QQ-plot does have some poorly behaved data points at the lower end, however, given the nature of QQ-plots, this is not particularly of concern. As further note for normality of residuals, we did perform a box-cox transform on this model, so the data should be especially well behaved.
+
+Autocorrelation of data is not a concern here, as this data was all collected within a single year. Furthermore, this data is all gathered from disparate institutions, so this further establishes independence from a design perspective.
+
+For outliers and influential points, we do find that there are several points with relatively high Cook's Distance, and some with relatively high Cook's Distance with a moderately high leverage. However, given the size of our data-set, we do not believe these are of particular concern. It would, to some extent, be even more odd if there were no such outliers. It is worth noting, however, that some of these more extreme Cook Distance measures are mollified by the Box-Cox transformation we performed earlier. However, we certainly have no reason or motivation to remove these outliers from the existing data.
 
 ## 4. Model selection and justification (10 pts)
 
 Candidate models are compared with a stated criterion (adjusted $R^2$, AIC, BIC, $C_p$, or an F test). The final model is chosen and the choice is justified in words. Note: STAT 540 groups: deeper selection justification In addition to the above, a 540 group compares at least three candidate models using at least two different criteria. Where the criteria disagree, the report explains why and says what the group traded off (fit against parsimony, or prediction against interpretation). Award 10 only if this is done. This is part of the criterion, not extra points.
 
-### Model 1
-
-### Model 2
-
-### Model 3
+### Model Selection
 
 ## 5. Integration and reproducibility (10 pts) - COMPLETE
 
