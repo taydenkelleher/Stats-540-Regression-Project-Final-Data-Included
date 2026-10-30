@@ -133,15 +133,14 @@ To interpret what a few of these values mean, we have the beta value associate w
 
 The beta value associated with `DEBT_MDN` is `-1.891e-01`, which means that the linear component of the `DEBT_MDN` is `-1.891e-01`.
 
-The beta value associated with `AVGFACSAL:DEBT_MDN`, the interaction between these two predictors is `-8.150e-05` which means the slope of `DEBT_MDN` increases by `-8.150e-05` for every increase of `AVGFACSAL` by 1, and vice versa. The beta value associated with `DEBT_ALL_STGP_ANY_MEAN:DEBT_MDN` is `2.350e-05`, which means that the slope of `DEBT_ALL_STGP_ANY_MEAN` increases by `2.350e-05` for every increase of 1 in `DEBT_MDN`, and vice versa. 
+The beta value associated with `AVGFACSAL:DEBT_MDN`, the interaction between these two predictors is `-8.150e-05` which means the slope of `DEBT_MDN` increases by `-8.150e-05` for every increase of `AVGFACSAL` by 1, and vice versa. The beta value associated with `DEBT_ALL_STGP_ANY_MEAN:DEBT_MDN` is `2.350e-05`, which means that the slope of `DEBT_ALL_STGP_ANY_MEAN` increases by `2.350e-05` for every increase of 1 in `DEBT_MDN`, and vice versa.
 
-We did not have any categorical variables in this to interpret for this model. 
+We did not have any categorical variables in this to interpret for this model.
 
 ```{r}
 model_2 <- lm(EARN_MDN_4YR~MAIN.x  + ADM_RATE_ALL+poly(C150_4_WHITE,2) + (PCIP51 + PCIP52)^2 + poly(UGDS_WHITE,2) + INEXPFTE + (AVGFACSAL + DEBT_ALL_STGP_ANY_MEAN + DEBT_MDN)^2 + COMP_ORIG_YR8_RT+ (DEATH_YR8_RT+PELL_COMP_4YR_TRANS_YR8_RT)^2 + NOPELL_WDRAW_ORIG_YR8_RT+ DISTANCE + (SATVRMID + SATMTMID)^2 ,data=centered_ed_data)
 summary(model_2)
 ```
-
 
 ```{r}
 model_2 <- lm(EARN_MDN_4YR~MAIN.x  + ADM_RATE_ALL+poly(C150_4_WHITE,2) + (PCIP51 + PCIP52)^2 + poly(UGDS_WHITE,2) + INEXPFTE + (AVGFACSAL + DEBT_ALL_STGP_ANY_MEAN + DEBT_MDN)^2 + COMP_ORIG_YR8_RT+ (DEATH_YR8_RT+PELL_COMP_4YR_TRANS_YR8_RT)^2 + NOPELL_WDRAW_ORIG_YR8_RT+ DISTANCE + (SATVRMID + SATMTMID)^2 ,data=centered_ed_data)
@@ -363,7 +362,7 @@ Since the assumptions for linear regression are the same for each model, we will
 
 #### Testing for Homoscedasticity
 
-One of the assumptions for linear regression is that we have equal variance from the model. This means if we were to plot fitted values versus residuals, we should get equal spread from zero. However, after plotting that, we can see that as our predicted value gets larger, so does the variance. Thus we have evidence against our assumption of equal variance. We can confirm this by running Brown Forsythe test, which gives us a p-value of `2.2e-16`, which suggests it is unlikely our data has equal variance. This suggests a transformation of our outcome variable may be useful, such as box cox or log transformation. 
+One of the assumptions for linear regression is that we have equal variance from the model. This means if we were to plot fitted values versus residuals, we should get equal spread from zero. However, after plotting that, we can see that as our predicted value gets larger, so does the variance. Thus we have evidence against our assumption of equal variance. We can confirm this by running Brown Forsythe test, which gives us a p-value of `2.2e-16`, which suggests it is unlikely our data has equal variance. This suggests a transformation of our outcome variable may be useful, such as box cox or log transformation.
 
 ```{r}
 plot(fitted.values(model_2), residuals(model_2))
@@ -372,13 +371,12 @@ leveneTest(residuals(model_2) ~ (fitted.values(model_2) > median(fitted.values(m
 
 #### Testing for normality
 
-One of the assumptions in regression is normally distributed errors. We will test this by plotting the qqline and qqplot. If our residuals are normally distributed, they should follow the line. If nonnormal, they will deviate from it. And since our dataset is so large, it is very unlikely this many points sampled from a normal distribution are this far off normally distributed. This again suggests some transformation of outcome variables, like box cox. 
+One of the assumptions in regression is normally distributed errors. We will test this by plotting the qqline and qqplot. If our residuals are normally distributed, they should follow the line. If nonnormal, they will deviate from it. And since our dataset is so large, it is very unlikely this many points sampled from a normal distribution are this far off normally distributed. This again suggests some transformation of outcome variables, like box cox.
 
 ```{r}
 qqnorm(summary(model_2)$residuals)
 qqline(summary(model_2)$residuals)
 ```
-
 
 #### Multicollinearity
 
@@ -388,14 +386,30 @@ To test for multicollinearity, we will calculate the vif. Using the rough calcul
 print(vif(model_2))
 ```
 
-
-
 ### Model 3
 
+#### Multicollinearity
+
+We know that by selection of our variables, none of our predictors are perfectly multicollinear, as we removed all of the perfectly or (nearly perfectly) multicollinear predictors in a prior part of the project. However, there are several variables which do have inflated VIF measurements, and thus are under suspicion for multicollinearity. Specifically, our in-state tuition, the type of school (public, private nonprofit, or private for-profit), the interaction terms between those two, and the interaction term between school type and admission rate. To some degree, inflated VIF for interaction terms is expected, however, these values are extremely high. Between these measurements and the associated $p$-values in the model fit, we have reason to remove some, if not most, of these in a revised model. However, as the purpose of this comparison is to see what makes a good model, we continue examining this model rather than a reduced model.
+
 ```{r}
+vif(model_3)
+```
 
+#### Testing for Homoscedasticity
+
+Given our fitted vs residuals plot, we see some indications of heteroskedasticity, in particular, the tendency for residuals to have a slightly more positive value on average, with those having negative values being less dense. Additionally, performing the Brown-Forsythe test gives us a $p$-value of $7.603 \cdot 10^{-7}$, so Brown-Forsythe concludes that it is unlikely our data has equal variance.
+
+```{r}
+leveneTest(residuals(model_3) ~ (fitted.values(model_3) > median(fitted.values(model_3))))
 plot(fitted.values(model_3), residuals(model_3), main = "Residuals vs Fitted", xlab = "Fitted", ylab = "Residuals")
+```
 
+#### Residuals
+
+Our residuals roughly follow a normal distribution, as established both by our residuals density plot, and our QQ-plot. Our QQ-plot does have some poorly behaved data points at the lower end, however, given the nature of QQ-plots, this is not particularly of concern. As further note for normality of residuals, we did perform a box-cox transform on this model, so the data should be especially well behaved.
+
+```{r}
 qqnorm(summary(model_3)$residuals)
 qqline(summary(model_3)$residuals, col = "red")
 
@@ -404,35 +418,20 @@ curve(dnorm(x, mean = mean(residuals(model_3)), sd = sd(residuals(model_3))),
       col = "red", lty = 2, add = TRUE)
 legend("topright", legend = c("Residual Density", "Normal Curve"), 
        col = c("black", "red"), lty = c(1, 2))
-
-plot(model_3, which = 4)
-plot(model_3, which = 5)
-
 ```
 
-#### Multicollinearity
-
-```{r}
-vif(model_3)
-```
-
-We know that by selection of our variables, none of our predictors are perfectly multicollinear, as we removed all of the perfectly or (nearly perfectly) multicollinear predictors in a prior part of the project. However, there are several variables which do have inflated VIF measurements, and thus are under suspicion for multicollinearity. Specifically, our in-state tuition, the type of school (public, private nonprofit, or private for-profit), the interaction terms between those two, and the interaction term between school type and admission rate. To some degree, inflated VIF for interaction terms is expected, however, these values are extrememly high. Between these measurements and the associated $p$-values in the model fit, we have reason to remove some, if not most, of these in a revised model. However, as the purpose of this comparison is to see what makes a good model, we continue examining this model rather than a reduced model.
-
-#### Testing for Homoscedasticity
-
-```{r}
-leveneTest(residuals(model_3) ~ (fitted.values(model_3) > median(fitted.values(model_3))))
-```
-
-Given our fitted vs residuals plot, we see some indications of heteroskedasticity, in particular, the tendency for residuals to have a slightly more positive value on average, with those having negative values being less dense. Additionally, performing the Brown-Forsythe test gives us a $p$-value of $7.603 \cdot 10^{-7}$, so Brown-Forsythe concludes that it is unlikely our data has equal variance.
-
-#### Residuals
-
-Our residuals roughly follow a normal distribution, as established both by our residuals density plot, and our QQ-plot. Our QQ-plot does have some poorly behaved data points at the lower end, however, given the nature of QQ-plots, this is not particularly of concern. As further note for normality of residuals, we did perform a box-cox transform on this model, so the data should be especially well behaved.
+#### Autocorrelation of Data
 
 Autocorrelation of data is not a concern here, as this data was all collected within a single year. Furthermore, this data is all gathered from disparate institutions, so this further establishes independence from a design perspective.
 
+#### Outliers and Influential Points
+
 For outliers and influential points, we do find that there are several points with relatively high Cook's Distance, and some with relatively high Cook's Distance with a moderately high leverage. However, given the size of our data-set, we do not believe these are of particular concern. It would, to some extent, be even more odd if there were no such outliers. It is worth noting, however, that some of these more extreme Cook Distance measures are mollified by the Box-Cox transformation we performed earlier. However, we certainly have no reason or motivation to remove these outliers from the existing data.
+
+```{r}
+plot(model_3, which = 4)
+plot(model_3, which = 5)
+```
 
 ## 4. Model selection and justification (10 pts)
 
@@ -440,7 +439,7 @@ Candidate models are compared with a stated criterion (adjusted $R^2$, AIC, BIC,
 
 ### Model Selection
 
-The two benchmarks we will use to measure how well our models perform are `R^2` and `AIC`. 
+The two benchmarks we will use to measure how well our models perform are `R^2` and `AIC`.
 
 #### R squared
 
@@ -449,6 +448,7 @@ summary(model_1)$r.sq
 summary(model_2)$r.sq
 summary(model_3)$r.sq
 ```
+
 ### AIC
 
 ```{r}
