@@ -123,9 +123,15 @@ To interpret what a few of these values mean, we have the beta value associate w
 
 The beta value associated with `DEBT_MDN` is `-1.891e-01`, which means that the linear component of the `DEBT_MDN` is `-1.891e-01`.
 
-The beta value associated with `AVGFACSAL:DEBT_MDN`, the interaction between these two predictors is `-8.150e-05` which means
+The beta value associated with `AVGFACSAL:DEBT_MDN`, the interaction between these two predictors is `-8.150e-05` which means the slope of `DEBT_MDN` increases by `-8.150e-05` for every increase of `AVGFACSAL` by 1, and vice versa. The beta value associated with `DEBT_ALL_STGP_ANY_MEAN:DEBT_MDN` is `2.350e-05`, which means that the slope of `DEBT_ALL_STGP_ANY_MEAN` increases by `2.350e-05` for every increase of 1 in `DEBT_MDN`, and vice versa. 
 
-AVGFACSAL:DEBT_MDN -8.150e-05 1.549e-05 -5.262 DEBT_ALL_STGP_ANY_MEAN:DEBT_MDN 2.350e-05 3.510e-06 6.694
+We did not have any categorical variables in this to interpret for this model. 
+
+```{r}
+model_2 <- lm(EARN_MDN_4YR~MAIN.x  + ADM_RATE_ALL+poly(C150_4_WHITE,2) + (PCIP51 + PCIP52)^2 + poly(UGDS_WHITE,2) + INEXPFTE + (AVGFACSAL + DEBT_ALL_STGP_ANY_MEAN + DEBT_MDN)^2 + COMP_ORIG_YR8_RT+ (DEATH_YR8_RT+PELL_COMP_4YR_TRANS_YR8_RT)^2 + NOPELL_WDRAW_ORIG_YR8_RT+ DISTANCE + (SATVRMID + SATMTMID)^2 ,data=centered_ed_data)
+summary(model_2)
+```
+
 
 ```{r}
 model_2 <- lm(EARN_MDN_4YR~MAIN.x  + ADM_RATE_ALL+poly(C150_4_WHITE,2) + (PCIP51 + PCIP52)^2 + poly(UGDS_WHITE,2) + INEXPFTE + (AVGFACSAL + DEBT_ALL_STGP_ANY_MEAN + DEBT_MDN)^2 + COMP_ORIG_YR8_RT+ (DEATH_YR8_RT+PELL_COMP_4YR_TRANS_YR8_RT)^2 + NOPELL_WDRAW_ORIG_YR8_RT+ DISTANCE + (SATVRMID + SATMTMID)^2 ,data=centered_ed_data)
