@@ -150,11 +150,6 @@ model_2 <- lm(EARN_MDN_4YR~MAIN.x  + ADM_RATE_ALL+poly(C150_4_WHITE,2) + (PCIP51
 summary(model_2)
 ```
 
-```{r}
-model_2 <- lm(EARN_MDN_4YR~MAIN.x  + ADM_RATE_ALL+poly(C150_4_WHITE,2) + (PCIP51 + PCIP52)^2 + poly(UGDS_WHITE,2) + INEXPFTE + (AVGFACSAL + DEBT_ALL_STGP_ANY_MEAN + DEBT_MDN)^2 + COMP_ORIG_YR8_RT+ (DEATH_YR8_RT+PELL_COMP_4YR_TRANS_YR8_RT)^2 + NOPELL_WDRAW_ORIG_YR8_RT+ DISTANCE + (SATVRMID + SATMTMID)^2 ,data=centered_ed_data)
-summary(model_2)
-```
-
 ### Model 3
 
 ```{r}
@@ -457,7 +452,7 @@ summary(model_2)$r.sq
 summary(model_3)$r.sq
 ```
 
-### AIC
+#### AIC
 
 ```{r}
 extractAIC(model_1)[2]
@@ -465,9 +460,45 @@ extractAIC(model_2)[2]
 extractAIC(model_3)[2]
 ```
 
-After looking at these measures
+#### Selected Model and Justification
 
-## 5. Integration and reproducibility (10 pts) - COMPLETE
+After looking at these measures, we conclude that model 2 is in general a better model. It has the lower AIC (with model 3 having a negative AIC due to lack of predictive power), and it also has the highest $R^2$ value, by nearly a full percentage point.
+
+However, as model 2 failed several key assumptions of a linear model, it does need to be slightly reworked. In particular, we need to perform a Box-Cox transformation to fix several key assumptions with the residuals.
+
+#### Corrected Model
+
+```{r}
+# Find the lm for the unshifted data, so we can get a boxcox model.
+model_2_unshifted <- lm(
+  EARN_MDN_4YR ~ MAIN.x  + ADM_RATE_ALL + poly(C150_4_WHITE, 2) + (PCIP51 + PCIP52)^2 + poly(UGDS_WHITE, 2) + INEXPFTE + (AVGFACSAL + DEBT_ALL_STGP_ANY_MEAN + DEBT_MDN)^2 + COMP_ORIG_YR8_RT + (DEATH_YR8_RT + PELL_COMP_4YR_TRANS_YR8_RT)^2 + NOPELL_WDRAW_ORIG_YR8_RT + DISTANCE + (SATVRMID + SATMTMID)^2 ,
+  data = ed_data
+)
+summary(model_2)
+# Generate boxcox model, and show plot.  Then, transform data.
+bc2 <- boxcox(model_2_unshifted)
+bc2$x[which.max(bc2$y)]
+m2_transformed_data = ed_data
+# Apply boxcox transform.
+m2_transformed_data$EARN_MDN_4YR = ((ed_data$EARN_MDN_4YR^bc3$x[which.max(bc2$y)] - 1)/bc2$x[which.max(bc3$y)])
+# Do some cleaning up.
+rm(model_2_unshifted)
+rm(bc2)
+# Now center the data.
+centered_m2_data <- m2_transformed_data
+numeric_cols <- sapply(m3_transformed_data, is.numeric)
+centered_m2_data[numeric_cols] <- lapply(centered_m3_data[numeric_cols],
+                                         scale, scale = FALSE)
+rm(numeric_cols)
+# And finally, generate the actual model and give the summary.
+model_2_corrected <- lm(
+  EARN_MDN_4YR ~ MAIN.x  + ADM_RATE_ALL + poly(C150_4_WHITE, 2) + (PCIP51 + PCIP52)^2 + poly(UGDS_WHITE, 2) + INEXPFTE + (AVGFACSAL + DEBT_ALL_STGP_ANY_MEAN + DEBT_MDN)^2 + COMP_ORIG_YR8_RT + (DEATH_YR8_RT + PELL_COMP_4YR_TRANS_YR8_RT)^2 + NOPELL_WDRAW_ORIG_YR8_RT + DISTANCE + (SATVRMID + SATMTMID)^2 ,
+  data = centered_m2_data
+)
+summary(model_2_corrected)
+```
+
+## 5. Integration and reproducibility (10 pts)
 
 The report builds on Milestone 2 and responds to its feedback. The submission is a rendered PDF named Group_XX_Milestone3.pdf, with code visible, a seed set, and sessionInfo() present.
 
