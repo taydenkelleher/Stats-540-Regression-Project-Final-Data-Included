@@ -222,7 +222,13 @@ There are no interaction terms with this model. The full model is just meant to 
 
 To test if the polynomial and interaction terms are significant, we will train reduced models that have everything except the polynomial or interaction term. Then we will use the `anova` function to compute a partial F test. After doing that, we see that each term is significant.
 
+### Model 2
+
+To test if the polynomial and interaction terms are significant, we will train reduced models that have everything except the polynomial or interaction term. Then we will use the `anova` function to compute a partial F test. After doing that, we see that each term is significant.
+
 #### C150_WHITE, Degree 2 Polynomial Term
+
+One variable that had a small p value in the full model was `C150_WHITE`, which is Completion rate for first-time, full-time students at four-year institutions (150% of expected time to completion) for white students. There were some other `C150` terms, including pooled term, and categories for black and hispanic students. These other terms were not super significant, so were looked to drop some of the variables, but wanted to keep some nonlinear information from the variable, so we decided to add a degree 2 polynomial term. After doing a partial f test, we have a p value of `0.000417`, which suggests the linear model does not explain everything. 
 
 ```{r}
 model_2_reduced <- lm(EARN_MDN_4YR~MAIN.x  + ADM_RATE_ALL+(C150_4_WHITE) + (PCIP51 + PCIP52)^2 + poly(UGDS_WHITE,2) + INEXPFTE + (AVGFACSAL + DEBT_ALL_STGP_ANY_MEAN + DEBT_MDN)^2 + COMP_ORIG_YR8_RT+ (DEATH_YR8_RT+PELL_COMP_4YR_TRANS_YR8_RT) + NOPELL_WDRAW_ORIG_YR8_RT+ DISTANCE + (SATVRMID + SATMTMID)^2 ,data=centered_ed_data)
@@ -232,6 +238,8 @@ rm(model_2_reduced)
 
 #### UGDS_WHITE Variable, Degree 2 Polynomial Term
 
+`UGDS_WHITE`, which represents Total share of enrollment of undergraduate degree-seeking students who are white, is similar to `C150_WHITE`. There are other UGDS terms, the nominal UGDS and specific ones for black and hispanic students, but again the `UGDS_WHITE` had the smallest p value in the model, and we wanted to drop variables, but not lose nonlinear data, so we added a polynomial term. After running a partial f test, we get that the p value is `3.394e-08` which suggests the polynomial terms explains real variation in the data. 
+
 ```{r}
 model_2_reduced <- lm(EARN_MDN_4YR~MAIN.x  + ADM_RATE_ALL+poly(C150_4_WHITE,2) + (PCIP51 + PCIP52)^2 + UGDS_WHITE + INEXPFTE + (AVGFACSAL + DEBT_ALL_STGP_ANY_MEAN + DEBT_MDN)^2 + COMP_ORIG_YR8_RT+ (DEATH_YR8_RT+PELL_COMP_4YR_TRANS_YR8_RT)^2 + NOPELL_WDRAW_ORIG_YR8_RT+ DISTANCE + (SATVRMID + SATMTMID)^2 ,data=centered_ed_data)
 print(anova(model_2_reduced, model_2))
@@ -239,6 +247,8 @@ rm(model_2_reduced)
 ```
 
 #### Interaction of PCIP51 and PCIP52
+
+For these terms, they represent Percentage of degrees awarded in Health Professions And Related Programs and Percentage of degrees awarded in Business, Management, Marketing, And Related Support Services respectively. Again, we have 50 other terms of this style representing share of degrees awarded by other departments. We wanted this to be interpretable, but to include some of the nonlinear information in the data. After computing a partial f test, we get a p-value of `0.0004809`, which suggests our interaction term represents a real interaction in the data. 
 
 ```{r}
 model_2_reduced <- lm(EARN_MDN_4YR~MAIN.x  + ADM_RATE_ALL+poly(C150_4_WHITE,2) + (PCIP51 + PCIP52) + poly(UGDS_WHITE,2) + INEXPFTE + (AVGFACSAL + DEBT_ALL_STGP_ANY_MEAN + DEBT_MDN)^2 + COMP_ORIG_YR8_RT+ (DEATH_YR8_RT+PELL_COMP_4YR_TRANS_YR8_RT)^2 + NOPELL_WDRAW_ORIG_YR8_RT+ DISTANCE + (SATVRMID + SATMTMID)^2 ,data=centered_ed_data)
@@ -248,6 +258,8 @@ rm(model_2_reduced)
 
 #### Interaction of AVGFACSAL, DEBT_ALL_STGP_ANY_MEAN, and DEBT_MDN
 
+AVGFACSAL is average faculty salary, DEBT_ALL_STGP_ANY_MEAN is Average Stafford and Grad PLUS loan debt disbursed at all institutions, and The median original amount of the loan principal upon entering repayment at the institution. All of these likely correlate to higher costs of schooling which could impact career earnigns, and we wanted to see how they interact with each other. Computing a partial f test, we get a p value of `2.2e-16` which suggests our interaction has real effects on the data. 
+
 ```{r}
 model_2_reduced <- lm(EARN_MDN_4YR~MAIN.x  + ADM_RATE_ALL+poly(C150_4_WHITE,2) + (PCIP51 + PCIP52)^2 + poly(UGDS_WHITE,2) + INEXPFTE + (AVGFACSAL + DEBT_ALL_STGP_ANY_MEAN + DEBT_MDN) + COMP_ORIG_YR8_RT+ (DEATH_YR8_RT+PELL_COMP_4YR_TRANS_YR8_RT)^2 + NOPELL_WDRAW_ORIG_YR8_RT+ DISTANCE + (SATVRMID + SATMTMID)^2 ,data=centered_ed_data)
 print(anova(model_2_reduced, model_2))
@@ -256,6 +268,8 @@ rm(model_2_reduced)
 
 #### Interaction of DEATH_YR8_RT and PELL_COMP_4YR_TRANS_YR8_RT
 
+DEATH_YR8_RT is Percent died within 8 years at original institution and PELL_COMP_4YR_TRANS_YR8_RT represents Percent of students who received a Pell Grant at the institution and who transferred to a 4-year institution and completed within 8 years. Death rate likely correlates with other things that correlate to worse education, and being elegible for Pell Grant also likely correlates with these confounders that make completing education more difficult. We were curious if these had any real interaction. After completing a partial f test, we got a p value of `0.000884` which suggests the interaction is statistically significant. 
+
 ```{r}
 model_2_reduced <- lm(EARN_MDN_4YR~MAIN.x  + ADM_RATE_ALL+poly(C150_4_WHITE,2) + (PCIP51 + PCIP52)^2 + poly(UGDS_WHITE,2) + INEXPFTE + (AVGFACSAL + DEBT_ALL_STGP_ANY_MEAN + DEBT_MDN)^2 + COMP_ORIG_YR8_RT+ (DEATH_YR8_RT+PELL_COMP_4YR_TRANS_YR8_RT) + NOPELL_WDRAW_ORIG_YR8_RT+ DISTANCE + (SATVRMID + SATMTMID)^2 ,data=centered_ed_data)
 print(anova(model_2_reduced, model_2))
@@ -263,6 +277,8 @@ rm(model_2_reduced)
 ```
 
 #### Interaction of SATVRMID and SATMTMID
+
+The last interaction term we used was between the two SAT scores. In EDA, we observed these two variables are strongly correlated with each other, but in the full model they were strongly correlated with each other. Thus we wanted to do see what the interaction was and what would happen. After running a partial f test, we get that a p value of `0.0001664 ` which suggest the interaction is real. One other potential explaination is that this is bascially a squared term for SAT scores, since the SAT scores are so strongly correlated and SAT scores predict earning of graduates. 
 
 ```{r}
 model_2_reduced <- lm(EARN_MDN_4YR~MAIN.x  + ADM_RATE_ALL+poly(C150_4_WHITE,2) + (PCIP51 + PCIP52)^2 + poly(UGDS_WHITE,2) + INEXPFTE + (AVGFACSAL + DEBT_ALL_STGP_ANY_MEAN + DEBT_MDN)^2 + COMP_ORIG_YR8_RT+ (DEATH_YR8_RT+PELL_COMP_4YR_TRANS_YR8_RT)^2 + NOPELL_WDRAW_ORIG_YR8_RT+ DISTANCE + (SATVRMID + SATMTMID) ,data=centered_ed_data)
