@@ -468,6 +468,8 @@ summary(model_2)$r.sq
 summary(model_3)$r.sq
 ```
 
+Looking at our models, we see model 1, the full linear model with no interaction or polynomial terms explains `0.2051042` proportion of variation from mean, model 2 explains slightly more variation from the mean at `0.2139218`, and model 3 explains `0.1152715` proportion of the variation from the mean. This tells us looking at polynomial and interaction terms does explain a meaningful amount of variation from the mean. This also suggests that model 3 cut useful terms. 
+
 #### AIC
 
 ```{r}
@@ -476,11 +478,13 @@ extractAIC(model_2)[2]
 extractAIC(model_3)[2]
 ```
 
+Looking at AIC, which is a measure of how much information is lost when reducing models with a penalty for more complex models we get that the best model is model 3, with models 1 and 2 about the same as each other with model 2 slighly smaller than model 1. This suggests that model 3 explains much of the data with way less predictors/interaction/polynomial terms.
+
 #### Selected Model and Justification
 
 After looking at these measures, we conclude that model 2 is in general a better model. It has the lower AIC (with model 3 having a negative AIC due to lack of predictive power), and it also has the highest $R^2$ value, by nearly a full percentage point.
 
-However, as model 2 failed several key assumptions of a linear model, it does need to be slightly reworked. In particular, we need to perform a Box-Cox transformation to fix several key assumptions with the residuals.
+However, as model 2 failed several key assumptions of a linear model, it does need to be slightly reworked. In particular, we need to perform a Box-Cox transformation to fix several key assumptions with the residuals. 
 
 
 ## 5. Integration and reproducibility (10 pts)
